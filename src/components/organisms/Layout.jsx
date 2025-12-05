@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import Header from "@/components/organisms/Header";
+import Sidebar from "@/components/organisms/Sidebar";
 
 const Layout = () => {
   const { isAuthenticated } = useSelector(state => state.user);
@@ -17,11 +18,14 @@ const Layout = () => {
   console.log("User authenticated, rendering layout");
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <main className="flex-1">
-        <Outlet />
-      </main>
+    <div className="min-h-screen bg-background flex">
+      <Sidebar />
+      <div className="flex-1 lg:ml-64">
+        <Header />
+        <main className="flex-1">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 };
