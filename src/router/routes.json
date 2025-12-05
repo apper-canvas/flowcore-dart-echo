@@ -104,6 +104,19 @@
       "redirectOnDeny": "/login"
     }
   }
+},
+  "/financials",":", {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "User must be authenticated to view financials",
+            "rule": "authenticated"
+          }
+        ]
+      },
+      "redirectOnDeny": "/login"
+    }
   },
   "/login",":", {
     "allow": {
@@ -176,6 +189,4 @@
         ]
       }
     }
-  }
-
-]
+  }]

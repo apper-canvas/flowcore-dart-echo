@@ -126,16 +126,16 @@ path: "orders",
             path: "financials",
 element: <Financials />
           }),
-          createRoute({
-            path: "/employees",
+createRoute({
+            path: "employees",
             element: <Employees />
           }),
           createRoute({
-            path: "/attendance", 
+            path: "attendance", 
             element: <Attendance />
           }),
           createRoute({
-            path: "/payroll",
+            path: "payroll",
             element: <Payroll />
           }),
           createRoute({

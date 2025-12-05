@@ -235,15 +235,16 @@ const columns = [
         
         <div className="card p-6">
           <div className="flex items-center justify-between">
-            <div>
+<div>
               <p className="text-sm font-medium text-gray-600">Avg. Order Value</p>
               <p className="text-2xl font-bold text-gray-900">
                 $
-                {customers.length > 0 
-                  ? (customers.reduce((sum, c) => sum + getCustomerTotalSpent(c.Id), 0) / 
-                     customers.filter(c => getCustomerOrderCount(c.Id) > 0).length || 1).toFixed(0)
-                  : 0
-                }
+                {(() => {
+                  if (customers.length === 0) return 0;
+                  const totalSpent = customers.reduce((sum, c) => sum + (getCustomerTotalSpent(c.Id) || 0), 0);
+                  const customersWithOrders = customers.filter(c => (getCustomerOrderCount(c.Id) || 0) > 0).length;
+                  return customersWithOrders > 0 ? (totalSpent / customersWithOrders).toFixed(0) : 0;
+                })()}
               </p>
             </div>
             <ApperIcon name="DollarSign" className="w-8 h-8 text-accent" />
