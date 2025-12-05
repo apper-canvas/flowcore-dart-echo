@@ -81,8 +81,8 @@ const paginatedData = React.useMemo(() => {
                     key={column.key}
                     className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
                   >
-                    {column.render 
-                      ? column.render(row[column.key], row) 
+{column.render 
+                      ? column.render(row) 
                       : row[column.key]
                     }
                   </td>
