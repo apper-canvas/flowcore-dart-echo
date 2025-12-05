@@ -46,7 +46,7 @@ const Header = () => {
                 <ApperIcon name="Layers" className="w-5 h-5 text-white" />
               </div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                FlowCore ERP
+ERP System
               </h1>
             </div>
           </div>
