@@ -140,9 +140,9 @@ const columns = [
       key: 'Name',
       label: 'Department Name',
       sortable: true,
-      render: (department) => (
+      render: (value, department) => (
         <div className="font-medium text-gray-900">
-          {department?.Name || department?.name || 'N/A'}
+          {value || department?.Name || department?.name || 'N/A'}
         </div>
       )
     },
@@ -150,9 +150,9 @@ const columns = [
       key: 'department_code_c',
       label: 'Code',
       sortable: true,
-      render: (department) => (
+      render: (value, department) => (
         <div className="text-sm text-gray-600 font-mono">
-          {department?.department_code_c || 'N/A'}
+          {value || department?.department_code_c || 'N/A'}
         </div>
       )
     },
@@ -160,9 +160,9 @@ const columns = [
       key: 'location_c',
       label: 'Location',
       sortable: true,
-      render: (department) => (
+      render: (value, department) => (
         <div className="text-sm text-gray-600">
-          {department?.location_c || 'N/A'}
+          {value || department?.location_c || 'N/A'}
         </div>
       )
     },
@@ -170,9 +170,9 @@ const columns = [
       key: 'email_c',
       label: 'Email',
       sortable: true,
-      render: (department) => (
+      render: (value, department) => (
         <div className="text-sm text-gray-600">
-          {department?.email_c || 'N/A'}
+          {value || department?.email_c || 'N/A'}
         </div>
       )
     },
@@ -180,9 +180,9 @@ const columns = [
       key: 'phone_number_c',
       label: 'Phone',
       sortable: true,
-      render: (department) => (
+      render: (value, department) => (
         <div className="text-sm text-gray-600">
-          {department?.phone_number_c || 'N/A'}
+          {value || department?.phone_number_c || 'N/A'}
         </div>
       )
     },
@@ -190,9 +190,9 @@ const columns = [
       key: 'manager_id_c',
       label: 'Manager ID',
       sortable: true,
-      render: (department) => (
+      render: (value, department) => (
         <div className="text-sm text-gray-600">
-          {department?.manager_id_c || 'N/A'}
+          {value || department?.manager_id_c || 'N/A'}
         </div>
       )
     },
@@ -200,16 +200,16 @@ const columns = [
       key: 'CreatedOn',
       label: 'Created',
       sortable: true,
-      render: (department) => (
+      render: (value, department) => (
         <div className="text-sm text-gray-500">
-          {department?.CreatedOn ? format(new Date(department.CreatedOn), 'MMM dd, yyyy') : 'N/A'}
+          {(value || department?.CreatedOn) ? format(new Date(value || department.CreatedOn), 'MMM dd, yyyy') : 'N/A'}
         </div>
       )
     },
     {
       key: 'actions',
       label: 'Actions',
-      render: (department) => (
+      render: (value, department) => (
         <div className="flex space-x-2">
           <button
             onClick={() => handleEditDepartment(department)}
