@@ -120,7 +120,7 @@ const orderColumns = [
       key: "total_c", 
       label: "Total", 
       sortable: true,
-      render: (value) => `$${(value || 0).toFixed(2)}`
+      render: (value) => `$${parseFloat(value || 0).toFixed(2)}`
     },
     { key: "status_c", label: "Status", sortable: true },
     { 
