@@ -133,21 +133,21 @@ const orderColumns = [
   ];
 
 const stockColumns = [
-    { key: "Name", label: "Product", sortable: true },
+{ key: "Name", label: "Product", sortable: true },
     { key: "sku_c", label: "SKU", sortable: true },
     { 
       key: "stock_level_c", 
       label: "Current Stock", 
       sortable: true,
-      render: (value) => (product?.stock_level_c ?? 0)
+      render: (value, product) => (product?.stock_level_c ?? 0)
     },
     { 
       key: "reorder_point_c", 
       label: "Reorder Point", 
       sortable: true,
-      render: (value) => (product?.reorder_point_c ?? 0)
+      render: (value, product) => (product?.reorder_point_c ?? 0)
     },
-{
+    {
       key: "status",
       label: "Status",
       render: (value, product) => {
