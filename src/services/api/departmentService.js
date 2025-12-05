@@ -76,13 +76,17 @@ class DepartmentService {
     try {
       const apperClient = getApperClient();
       
-      // Filter out empty values and only include updateable fields
+// Filter out empty values and only include updateable fields
       const cleanData = {};
       const updateableFields = ['Name', 'Tags', 'description_c', 'department_code_c', 'location_c', 'email_c', 'phone_number_c', 'manager_id_c'];
       
       updateableFields.forEach(field => {
         if (departmentData[field] !== undefined && departmentData[field] !== null && departmentData[field] !== '') {
-          cleanData[field] = departmentData[field];
+          if (field === 'manager_id_c') {
+            cleanData[field] = parseInt(departmentData[field]);
+          } else {
+            cleanData[field] = departmentData[field];
+          }
         }
       });
 
@@ -129,15 +133,18 @@ class DepartmentService {
       const apperClient = getApperClient();
       
       // Filter out empty values and only include updateable fields
-      const cleanData = { Id: parseInt(id) };
+const cleanData = { Id: parseInt(id) };
       const updateableFields = ['Name', 'Tags', 'description_c', 'department_code_c', 'location_c', 'email_c', 'phone_number_c', 'manager_id_c'];
       
       updateableFields.forEach(field => {
         if (departmentData[field] !== undefined && departmentData[field] !== null && departmentData[field] !== '') {
-          cleanData[field] = departmentData[field];
+          if (field === 'manager_id_c') {
+            cleanData[field] = parseInt(departmentData[field]);
+          } else {
+            cleanData[field] = departmentData[field];
+          }
         }
       });
-
       const params = {
         records: [cleanData]
       };

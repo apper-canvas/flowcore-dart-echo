@@ -21,14 +21,14 @@ const DepartmentModal = ({ isOpen, onClose, department, onSave }) => {
   useEffect(() => {
     if (department) {
       setFormData({
-        Name: department.Name || '',
+Name: department.Name || '',
         Tags: department.Tags || '',
         description_c: department.description_c || '',
         department_code_c: department.department_code_c || '',
         location_c: department.location_c || '',
         email_c: department.email_c || '',
         phone_number_c: department.phone_number_c || '',
-        manager_id_c: department.manager_id_c || ''
+        manager_id_c: department.manager_id_c?.toString() || ''
       });
     } else {
       setFormData({
@@ -60,8 +60,8 @@ const DepartmentModal = ({ isOpen, onClose, department, onSave }) => {
       newErrors.email_c = 'Invalid email format';
     }
 
-    if (formData.manager_id_c && isNaN(formData.manager_id_c)) {
-      newErrors.manager_id_c = 'Manager ID must be a number';
+if (formData.manager_id_c && isNaN(parseInt(formData.manager_id_c))) {
+      newErrors.manager_id_c = 'Manager ID must be a valid number';
     }
     
     setErrors(newErrors);
