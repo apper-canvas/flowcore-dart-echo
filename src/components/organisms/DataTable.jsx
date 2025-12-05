@@ -33,15 +33,7 @@ const DataTable = ({
       return sortDirection === "asc" ? comparison : -comparison;
     });
   }, [data, sortBy, sortDirection]);
-
-  if (loading) {
-    return <Loading type="table" />;
-  }
-
-  if (!data || data.length === 0) {
-    return emptyState || <Empty />;
-  }
-// Handle pagination if provided
+// Handle pagination if provided - must be called before early returns
   const paginatedData = React.useMemo(() => {
     if (!pagination || !sortedData) return sortedData;
     
@@ -51,6 +43,14 @@ const DataTable = ({
     
     return sortedData.slice(startIndex, endIndex);
   }, [sortedData, pagination]);
+
+  if (loading) {
+    return <Loading type="table" />;
+  }
+
+  if (!data || data.length === 0) {
+    return emptyState || <Empty />;
+  }
 
   return (
     <div className={`card overflow-hidden ${className}`}>
