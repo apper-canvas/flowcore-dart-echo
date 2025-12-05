@@ -52,14 +52,14 @@ const Sidebar = () => {
         ${isExpanded ? 'w-64' : 'w-16 lg:w-16'}
       `}>
         {/* Sidebar Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+<div className="flex items-center justify-between p-4 border-b border-gray-200">
           {isExpanded && (
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">FC</span>
+                <span className="text-white font-bold text-sm">ERP</span>
               </div>
               <span className="font-bold text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                FlowCore
+                ERP System
               </span>
             </div>
           )}
