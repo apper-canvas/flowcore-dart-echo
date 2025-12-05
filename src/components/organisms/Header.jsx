@@ -3,35 +3,20 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useAuth } from "@/layouts/Root";
 import ApperIcon from "@/components/ApperIcon";
-import SearchBar from "@/components/molecules/SearchBar";
 import Button from "@/components/atoms/Button";
 
 const Header = () => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { user } = useSelector(state => state.user);
   const { logout } = useAuth();
-
   const navigationItems = [
     { name: "Dashboard", href: "/", icon: "BarChart3" },
     { name: "Inventory", href: "/inventory", icon: "Package" },
     { name: "Orders", href: "/orders", icon: "ShoppingCart" },
     { name: "Customers", href: "/customers", icon: "Users" },
     { name: "Financials", href: "/financials", icon: "DollarSign" }
-  ];
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      // In a real app, this would perform global search
-      console.log("Searching for:", searchQuery);
-    }
-  };
-
+];
   return (
     <header className="bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -77,18 +62,7 @@ ERP System
               </NavLink>
             ))}
           </nav>
-
-          {/* Search Bar */}
-          <div className="hidden md:block max-w-sm w-full">
-            <form onSubmit={handleSearchSubmit}>
-              <SearchBar
-                value={searchQuery}
-                onChange={handleSearch}
-                placeholder="Search products, orders, customers..."
-              />
-            </form>
-          </div>
-
+{/* Mobile Menu Button */}
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -103,16 +77,9 @@ ERP System
       </div>
 
       {/* Mobile Navigation */}
-      {isMobileMenuOpen && (
+{isMobileMenuOpen && (
         <div className="lg:hidden border-t border-gray-200 bg-white">
           <div className="px-4 py-2">
-            <form onSubmit={handleSearchSubmit} className="mb-4">
-              <SearchBar
-                value={searchQuery}
-                onChange={handleSearch}
-                placeholder="Search..."
-              />
-            </form>
             <nav className="space-y-1">
 {navigationItems.map((item) => (
                 <NavLink
