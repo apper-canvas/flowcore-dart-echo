@@ -26,12 +26,25 @@
       "redirectOnDeny": "/login"
     }
   },
-  "/orders": {
+"/orders": {
     "allow": {
       "when": {
         "conditions": [
           {
             "label": "User must be authenticated to manage orders",
+            "rule": "authenticated"
+          }
+        ]
+      },
+      "redirectOnDeny": "/login"
+    }
+  },
+  "/sales-orders": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "User must be authenticated to manage sales orders",
             "rule": "authenticated"
           }
         ]
@@ -50,7 +63,7 @@
         ]
       },
       "redirectOnDeny": "/login"
-}
+    }
   }},
   {
     "path": "/employees",

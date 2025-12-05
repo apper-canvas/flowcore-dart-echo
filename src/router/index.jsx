@@ -8,6 +8,7 @@ import Layout from "@/components/organisms/Layout";
 const Dashboard = lazy(() => import("@/components/pages/Dashboard"));
 const Inventory = lazy(() => import("@/components/pages/Inventory"));
 const Orders = lazy(() => import("@/components/pages/Orders"));
+const SalesOrders = lazy(() => import("@/components/pages/SalesOrders"));
 const Customers = lazy(() => import("@/components/pages/Customers"));
 const Financials = lazy(() => import("@/components/pages/Financials"));
 const Employees = lazy(() => import("@/components/pages/Employees"));
@@ -110,8 +111,12 @@ export const router = createBrowserRouter([
             element: <Inventory />
           }),
           createRoute({
-            path: "orders",
+path: "orders",
             element: <Orders />
+          }),
+          route({
+            path: "sales-orders",
+            element: <SalesOrders />
           }),
           createRoute({
             path: "customers",
