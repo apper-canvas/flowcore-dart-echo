@@ -16,7 +16,6 @@ const navigationItems = [
     { name: "Orders", href: "/orders", icon: "ShoppingCart" },
     { name: "Sales Orders", href: "/sales-orders", icon: "ShoppingBag" },
     { name: "Customers", href: "/customers", icon: "Users" },
-    { name: "Financials", href: "/financials", icon: "DollarSign" },
     {
       name: "HR Management",
       icon: "UserCog",

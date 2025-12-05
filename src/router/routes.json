@@ -1,3 +1,4 @@
+[
 {
   "/": {
     "allow": {
@@ -102,21 +103,9 @@
       },
       "redirectOnDeny": "/login"
     }
+  }
   },
-  "/financials": {
-    "allow": {
-      "when": {
-        "conditions": [
-          {
-            "label": "User must be authenticated to view financials",
-            "rule": "authenticated"
-          }
-        ]
-      },
-      "redirectOnDeny": "/login"
-    }
-  },
-  "/login": {
+  "/login",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -128,7 +117,7 @@
       }
     }
   },
-  "/signup": {
+  "/signup",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -140,7 +129,7 @@
       }
     }
   },
-  "/callback": {
+  "/callback",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -152,7 +141,7 @@
       }
     }
   },
-  "/error": {
+  "/error",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -164,7 +153,7 @@
       }
     }
   },
-  "/prompt-password/*": {
+  "/prompt-password/*",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -176,7 +165,7 @@
       }
     }
   },
-  "/reset-password/*": {
+  "/reset-password/*",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -188,4 +177,5 @@
       }
     }
   }
-}
+
+]
