@@ -19,7 +19,10 @@ class TransactionService {
           {"field": {"Name": "related_order_id_c"}},
           {"field": {"Name": "CreatedOn"}}
         ],
-        orderBy: [{"fieldName": "CreatedOn", "sorttype": "DESC"}]
+        orderBy: [{
+          "fieldName": "date_c",
+          "sorttype": "DESC"
+        }]
       });
 
       if (!response.success) {

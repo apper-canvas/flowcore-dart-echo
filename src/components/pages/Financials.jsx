@@ -8,11 +8,11 @@ import ErrorView from "@/components/ui/ErrorView";
 import Empty from "@/components/ui/Empty";
 import Select from "@/components/atoms/Select";
 import Button from "@/components/atoms/Button";
-import Pagination from "@/components/molecules/Pagination";
 import TransactionModal from "@/components/organisms/TransactionModal";
 import DataTable from "@/components/organisms/DataTable";
 import SearchBar from "@/components/molecules/SearchBar";
 import MetricCard from "@/components/molecules/MetricCard";
+import Pagination from "@/components/molecules/Pagination";
 
 const Financials = () => {
   const [transactions, setTransactions] = useState([]);
@@ -36,34 +36,47 @@ useEffect(() => {
     filterTransactions();
   }, [transactions, searchQuery, typeFilter, categoryFilter]);
 
-  const loadTransactions = async () => {
+const loadTransactions = async () => {
     setLoading(true);
     setError("");
     
     try {
+      console.log('Loading transactions...');
       const [transactionsData, summaryData] = await Promise.all([
         transactionService.getAll(),
         transactionService.getSummary()
       ]);
-      setTransactions(transactionsData);
-      setSummary(summaryData);
+      
+      console.log('Loaded transactions:', transactionsData);
+      console.log('Transaction count:', transactionsData?.length || 0);
+      console.log('Summary data:', summaryData);
+      
+      // Ensure we have valid arrays
+      setTransactions(transactionsData || []);
+      setSummary(summaryData || {});
     } catch (err) {
       setError("Failed to load financial data");
       console.error("Financials error:", err);
+      // Set empty arrays on error to prevent undefined issues
+      setTransactions([]);
+      setSummary({});
     } finally {
       setLoading(false);
-    }
-  };
-
+};
 const filterTransactions = () => {
     const previousFiltered = filteredTransactions;
     let filtered = [...transactions];
+
+    // Debug: Log raw transactions data
+    console.log('Raw transactions:', transactions);
+    console.log('Transactions count:', transactions.length);
 
     // Search filter
     if (searchQuery) {
       filtered = filtered.filter(transaction =>
         (transaction.description_c || transaction.description || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (transaction.category_c || transaction.category || '').toLowerCase().includes(searchQuery.toLowerCase())
+        (transaction.category_c || transaction.category || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (transaction.Name || '').toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
@@ -77,6 +90,9 @@ const filterTransactions = () => {
       filtered = filtered.filter(transaction => (transaction.category_c || transaction.category) === categoryFilter);
     }
 
+    console.log('Filtered transactions:', filtered);
+    console.log('Filtered count:', filtered.length);
+    
     setFilteredTransactions(filtered);
     
     // Only reset to first page if the filtered results actually changed
@@ -84,8 +100,7 @@ const filterTransactions = () => {
     if (JSON.stringify(previousFiltered) !== JSON.stringify(filtered)) {
       setCurrentPage(1);
     }
-  };
-
+};
   const handleSaveTransaction = async (transactionData) => {
     try {
       if (selectedTransaction) {
@@ -206,10 +221,9 @@ const filterTransactions = () => {
         <ErrorView message={error} onRetry={loadTransactions} />
       </div>
     );
-  }
+}
 
-  const categories = [...new Set(transactions.map(t => t.category))];
-
+  const categories = [...new Set(transactions.map(t => t.category_c || t.category).filter(Boolean))];
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
