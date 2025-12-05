@@ -34,15 +34,28 @@ const Departments = () => {
     filterDepartments();
   }, [departments, searchTerm, locationFilter]);
 
-  const loadDepartments = async () => {
+const loadDepartments = async () => {
     try {
       setLoading(true);
       setError(null);
       const data = await departmentService.getAll();
-      setDepartments(data);
+      
+      // Debug logging to understand data structure
+      console.log('Departments data received:', data);
+      console.log('First department sample:', data?.[0]);
+      
+      // Ensure data is an array
+      if (Array.isArray(data)) {
+        setDepartments(data);
+        console.log(`Loaded ${data.length} departments successfully`);
+      } else {
+        console.warn('Service returned non-array data:', data);
+        setDepartments([]);
+      }
     } catch (err) {
       setError('Failed to load departments');
       console.error('Error loading departments:', err);
+      setDepartments([]);
     } finally {
       setLoading(false);
     }
