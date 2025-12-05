@@ -28,21 +28,23 @@ const [selectedProduct, setSelectedProduct] = useState(null);
   const [totalItems, setTotalItems] = useState(0);
 
 useEffect(() => {
-    loadProducts();
+loadProducts();
   }, [currentPage, itemsPerPage, searchQuery, categoryFilter, statusFilter]);
 
 const loadProducts = async () => {
     try {
       setLoading(true);
       setError("");
-      const offset = (currentPage - 1) * itemsPerPage;
-      const response = await productService.getAllPaginated(itemsPerPage, offset);
+      
+      // For client-side filtering, we need to fetch more data to ensure we have enough records
+      // We'll fetch a larger batch and then apply client-side pagination
+      const fetchLimit = Math.max(itemsPerPage * 5, 100); // Fetch more records for filtering
+      const response = await productService.getAllPaginated(fetchLimit, 0); // Always start from 0 for client-side filtering
       
       if (response && response.data) {
         setProducts(response.data);
-        setTotalItems(response.total || 0);
         
-        // Apply client-side filtering if needed
+        // Apply client-side filtering first
         let filtered = response.data;
         
         if (searchQuery) {
@@ -73,6 +75,8 @@ const loadProducts = async () => {
           });
         }
 
+        // Set the total items to the filtered count for proper pagination
+        setTotalItems(filtered.length);
         setFilteredProducts(filtered);
       } else {
         setProducts([]);
