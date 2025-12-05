@@ -63,7 +63,7 @@ const Dashboard = () => {
       setRecentOrders(recent);
 
       // Get low stock products
-      const lowStock = products.filter(p => p.stockLevel <= p.reorderPoint);
+const lowStock = products.filter(p => (p.stock_level_c || 0) <= (p.reorder_point_c || 0));
       setLowStockProducts(lowStock);
 
     } catch (err) {
@@ -109,36 +109,36 @@ const Dashboard = () => {
     );
   }
 
-  const orderColumns = [
-    { key: "orderNumber", label: "Order #", sortable: true },
+const orderColumns = [
+    { key: "order_number_c", label: "Order #", sortable: true },
     { 
-      key: "total", 
+      key: "total_c", 
       label: "Total", 
       sortable: true,
-      render: (value) => `$${value.toFixed(2)}`
+      render: (value) => `$${(value || 0).toFixed(2)}`
     },
-    { key: "status", label: "Status", sortable: true },
+    { key: "status_c", label: "Status", sortable: true },
     { 
-      key: "createdAt", 
+      key: "CreatedOn", 
       label: "Date", 
       sortable: true,
       render: (value) => format(new Date(value), "MMM dd, yyyy")
     }
   ];
 
-  const stockColumns = [
-    { key: "name", label: "Product", sortable: true },
-    { key: "sku", label: "SKU", sortable: true },
-    { key: "stockLevel", label: "Current Stock", sortable: true },
-    { key: "reorderPoint", label: "Reorder Point", sortable: true },
+const stockColumns = [
+    { key: "Name", label: "Product", sortable: true },
+    { key: "sku_c", label: "SKU", sortable: true },
+    { key: "stock_level_c", label: "Current Stock", sortable: true },
+    { key: "reorder_point_c", label: "Reorder Point", sortable: true },
     {
       key: "status",
       label: "Status",
       render: (value, product) => (
         <span className={`status-badge ${
-          product.stockLevel === 0 ? 'status-out-of-stock' : 'status-low-stock'
+          (product.stock_level_c || 0) === 0 ? 'status-out-of-stock' : 'status-low-stock'
         }`}>
-          {product.stockLevel === 0 ? 'Out of Stock' : 'Low Stock'}
+          {(product.stock_level_c || 0) === 0 ? 'Out of Stock' : 'Low Stock'}
         </span>
       )
     }

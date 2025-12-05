@@ -1,106 +1,277 @@
-import mockData from "../mockData/transactions.json";
+import { getApperClient } from "@/services/apperClient";
 
 class TransactionService {
-  constructor() {
-    this.transactions = [...mockData];
-  }
-
   async getAll() {
-    await this.delay();
-    return [...this.transactions];
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) throw new Error("ApperClient not initialized");
+
+      const response = await apperClient.fetchRecords('transaction_c', {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "amount_c"}},
+          {"field": {"Name": "category_c"}},
+          {"field": {"Name": "description_c"}},
+          {"field": {"Name": "date_c"}},
+          {"field": {"Name": "notes_c"}},
+          {"field": {"Name": "type_c"}},
+          {"field": {"Name": "related_order_id_c"}},
+          {"field": {"Name": "CreatedOn"}}
+        ],
+        orderBy: [{"fieldName": "CreatedOn", "sorttype": "DESC"}]
+      });
+
+      if (!response.success) {
+        console.error(response.message);
+        return [];
+      }
+
+      return response.data || [];
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+      return [];
+    }
   }
 
   async getById(id) {
-    await this.delay();
-    const transaction = this.transactions.find(t => t.Id === parseInt(id));
-    if (!transaction) {
-      throw new Error("Transaction not found");
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) throw new Error("ApperClient not initialized");
+
+      const response = await apperClient.getRecordById('transaction_c', parseInt(id), {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "amount_c"}},
+          {"field": {"Name": "category_c"}},
+          {"field": {"Name": "description_c"}},
+          {"field": {"Name": "date_c"}},
+          {"field": {"Name": "notes_c"}},
+          {"field": {"Name": "type_c"}},
+          {"field": {"Name": "related_order_id_c"}}
+        ]
+      });
+
+      if (!response.success) {
+        throw new Error(response.message || "Transaction not found");
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching transaction ${id}:`, error);
+      throw error;
     }
-    return { ...transaction };
   }
 
   async create(transactionData) {
-    await this.delay();
-    const newTransaction = {
-      Id: this.getNextId(),
-      ...transactionData,
-      date: new Date().toISOString(),
-      relatedOrderId: transactionData.relatedOrderId || null
-    };
-    this.transactions.push(newTransaction);
-    return { ...newTransaction };
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) throw new Error("ApperClient not initialized");
+
+      const params = {
+        records: [{
+          Name: transactionData.description_c || transactionData.description || '',
+          amount_c: parseFloat(transactionData.amount_c || transactionData.amount || 0),
+          category_c: transactionData.category_c || transactionData.category || '',
+          description_c: transactionData.description_c || transactionData.description || '',
+          date_c: transactionData.date_c || new Date().toISOString().split('T')[0],
+          notes_c: transactionData.notes_c || transactionData.notes || '',
+          type_c: transactionData.type_c || transactionData.type || 'income',
+          related_order_id_c: transactionData.related_order_id_c || transactionData.relatedOrderId || null
+        }]
+      };
+
+      const response = await apperClient.createRecord('transaction_c', params);
+
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+
+        if (failed.length > 0) {
+          console.error(`Failed to create ${failed.length} transaction records:`, failed);
+        }
+
+        return successful.length > 0 ? successful[0].data : null;
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error creating transaction:", error);
+      throw error;
+    }
   }
 
   async update(id, transactionData) {
-    await this.delay();
-    const index = this.transactions.findIndex(t => t.Id === parseInt(id));
-    if (index === -1) {
-      throw new Error("Transaction not found");
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) throw new Error("ApperClient not initialized");
+
+      const params = {
+        records: [{
+          Id: parseInt(id),
+          Name: transactionData.description_c || transactionData.description || '',
+          amount_c: parseFloat(transactionData.amount_c || transactionData.amount || 0),
+          category_c: transactionData.category_c || transactionData.category || '',
+          description_c: transactionData.description_c || transactionData.description || '',
+          date_c: transactionData.date_c || transactionData.date,
+          notes_c: transactionData.notes_c || transactionData.notes || '',
+          type_c: transactionData.type_c || transactionData.type || 'income'
+        }]
+      };
+
+      const response = await apperClient.updateRecord('transaction_c', params);
+
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+
+        if (failed.length > 0) {
+          console.error(`Failed to update ${failed.length} transaction records:`, failed);
+        }
+
+        return successful.length > 0 ? successful[0].data : null;
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error updating transaction:", error);
+      throw error;
     }
-    
-    this.transactions[index] = {
-      ...this.transactions[index],
-      ...transactionData,
-      Id: parseInt(id)
-    };
-    
-    return { ...this.transactions[index] };
   }
 
   async delete(id) {
-    await this.delay();
-    const index = this.transactions.findIndex(t => t.Id === parseInt(id));
-    if (index === -1) {
-      throw new Error("Transaction not found");
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) throw new Error("ApperClient not initialized");
+
+      const response = await apperClient.deleteRecord('transaction_c', {
+        RecordIds: [parseInt(id)]
+      });
+
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const failed = response.results.filter(r => !r.success);
+        if (failed.length > 0) {
+          console.error(`Failed to delete ${failed.length} transaction records:`, failed);
+          return false;
+        }
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Error deleting transaction:", error);
+      throw error;
     }
-    
-    this.transactions.splice(index, 1);
-    return true;
   }
 
   async getByType(type) {
-    await this.delay();
-    return this.transactions.filter(t => t.type.toLowerCase() === type.toLowerCase());
-  }
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) throw new Error("ApperClient not initialized");
 
-  async getByDateRange(startDate, endDate) {
-    await this.delay();
-    return this.transactions.filter(t => {
-      const transactionDate = new Date(t.date);
-      return transactionDate >= new Date(startDate) && transactionDate <= new Date(endDate);
-    });
+      const response = await apperClient.fetchRecords('transaction_c', {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "amount_c"}},
+          {"field": {"Name": "category_c"}},
+          {"field": {"Name": "description_c"}},
+          {"field": {"Name": "date_c"}},
+          {"field": {"Name": "notes_c"}},
+          {"field": {"Name": "type_c"}}
+        ],
+        where: [{
+          "FieldName": "type_c",
+          "Operator": "EqualTo",
+          "Values": [type.toLowerCase()],
+          "Include": true
+        }]
+      });
+
+      if (!response.success) {
+        console.error(response.message);
+        return [];
+      }
+
+      return response.data || [];
+    } catch (error) {
+      console.error("Error fetching transactions by type:", error);
+      return [];
+    }
   }
 
   async getSummary() {
-    await this.delay();
-    const income = this.transactions
-      .filter(t => t.type === "income")
-      .reduce((sum, t) => sum + t.amount, 0);
-    
-    const expenses = this.transactions
-      .filter(t => t.type === "expense")
-      .reduce((sum, t) => sum + t.amount, 0);
-    
-    return {
-      totalIncome: income,
-      totalExpenses: expenses,
-      netIncome: income - expenses
-    };
+    try {
+      const transactions = await this.getAll();
+      
+      const income = transactions
+        .filter(t => t.type_c === "income")
+        .reduce((sum, t) => sum + (t.amount_c || 0), 0);
+      
+      const expenses = transactions
+        .filter(t => t.type_c === "expense")
+        .reduce((sum, t) => sum + (t.amount_c || 0), 0);
+      
+      return {
+        totalIncome: income,
+        totalExpenses: expenses,
+        netIncome: income - expenses
+      };
+    } catch (error) {
+      console.error("Error getting transaction summary:", error);
+      return {
+        totalIncome: 0,
+        totalExpenses: 0,
+        netIncome: 0
+      };
+    }
   }
 
   async getRecentTransactions(limit = 10) {
-    await this.delay();
-    return this.transactions
-      .sort((a, b) => new Date(b.date) - new Date(a.date))
-      .slice(0, limit);
-  }
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) throw new Error("ApperClient not initialized");
 
-  getNextId() {
-    return Math.max(...this.transactions.map(t => t.Id), 0) + 1;
-  }
+      const response = await apperClient.fetchRecords('transaction_c', {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "amount_c"}},
+          {"field": {"Name": "category_c"}},
+          {"field": {"Name": "description_c"}},
+          {"field": {"Name": "date_c"}},
+          {"field": {"Name": "type_c"}},
+          {"field": {"Name": "CreatedOn"}}
+        ],
+        orderBy: [{"fieldName": "CreatedOn", "sorttype": "DESC"}],
+        pagingInfo: {"limit": limit, "offset": 0}
+      });
 
-  delay(ms = 300) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+      if (!response.success) {
+        console.error(response.message);
+        return [];
+      }
+
+      return response.data || [];
+    } catch (error) {
+      console.error("Error fetching recent transactions:", error);
+      return [];
+    }
   }
 }
 

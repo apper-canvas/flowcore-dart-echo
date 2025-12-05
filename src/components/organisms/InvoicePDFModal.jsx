@@ -39,10 +39,9 @@ const InvoicePDFModal = ({ isOpen, onClose, order }) => {
   };
 
   const loadCustomerData = async () => {
-    if (!order?.customerId) return;
-    
-    try {
-      const customerData = await customerService.getById(order.customerId);
+try {
+      const customerData = await customerService.getById(order.customer_id_c);
+      setCustomer(customerData);
       setCustomer(customerData);
     } catch (error) {
       console.error("Failed to load customer data:", error);
@@ -60,23 +59,23 @@ const InvoicePDFModal = ({ isOpen, onClose, order }) => {
 
     try {
       const invoiceData = {
-        order: {
+order: {
           id: order.Id,
-          orderNumber: order.orderNumber,
-          date: order.createdAt,
-          status: order.status,
-          subtotal: order.subtotal || 0,
-          tax: order.tax || 0,
-          total: order.total || 0,
+          order_number_c: order.order_number_c,
+          CreatedOn: order.CreatedOn,
+          status_c: order.status_c,
+          subtotal_c: order.subtotal_c || 0,
+          tax_c: order.tax_c || 0,
+          total_c: order.total_c || 0,
           items: order.items || [],
-          notes: order.notes || ""
+          notes_c: order.notes_c || ""
         },
         customer: {
           id: customer.Id,
-          name: customer.name,
-          email: customer.email || "",
-          phone: customer.phone || "",
-          address: customer.address || ""
+          Name: customer.Name,
+          email_c: customer.email_c || "",
+          phone_c: customer.phone_c || "",
+          address_c: customer.address_c || ""
         },
         company: {
           name: "FlowCore ERP",
@@ -143,9 +142,9 @@ const InvoicePDFModal = ({ isOpen, onClose, order }) => {
               <div className="mb-6">
                 <h3 className="font-medium text-gray-900 mb-2">Invoice Details</h3>
                 <div className="text-sm text-gray-600 space-y-1">
-                  <p>Order: {order?.orderNumber}</p>
-                  <p>Customer: {customer?.name || "Loading..."}</p>
-                  <p>Total: ${order?.total?.toFixed(2) || "0.00"}</p>
+<p>Order: {order?.order_number_c}</p>
+                  <p>Customer: {customer?.Name || "Loading..."}</p>
+                  <p>Total: ${order?.total_c?.toFixed(2) || "0.00"}</p>
                 </div>
               </div>
 

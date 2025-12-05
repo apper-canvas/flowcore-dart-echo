@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import DataTable from "@/components/organisms/DataTable";
-import TransactionModal from "@/components/organisms/TransactionModal";
-import MetricCard from "@/components/molecules/MetricCard";
-import SearchBar from "@/components/molecules/SearchBar";
-import Button from "@/components/atoms/Button";
-import Select from "@/components/atoms/Select";
+import { format } from "date-fns";
+import transactionService from "@/services/api/transactionService";
+import ApperIcon from "@/components/ApperIcon";
 import Loading from "@/components/ui/Loading";
 import ErrorView from "@/components/ui/ErrorView";
 import Empty from "@/components/ui/Empty";
-import ApperIcon from "@/components/ApperIcon";
-import transactionService from "@/services/api/transactionService";
-import { format } from "date-fns";
+import Select from "@/components/atoms/Select";
+import Button from "@/components/atoms/Button";
+import TransactionModal from "@/components/organisms/TransactionModal";
+import DataTable from "@/components/organisms/DataTable";
+import SearchBar from "@/components/molecules/SearchBar";
+import MetricCard from "@/components/molecules/MetricCard";
 
 const Financials = () => {
   const [transactions, setTransactions] = useState([]);
@@ -52,25 +52,25 @@ const Financials = () => {
     }
   };
 
-  const filterTransactions = () => {
+const filterTransactions = () => {
     let filtered = [...transactions];
 
     // Search filter
     if (searchQuery) {
       filtered = filtered.filter(transaction =>
-        transaction.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        transaction.category.toLowerCase().includes(searchQuery.toLowerCase())
+        (transaction.description_c || transaction.description || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (transaction.category_c || transaction.category || '').toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     // Type filter
     if (typeFilter) {
-      filtered = filtered.filter(transaction => transaction.type === typeFilter);
+      filtered = filtered.filter(transaction => (transaction.type_c || transaction.type) === typeFilter);
     }
 
     // Category filter
     if (categoryFilter) {
-      filtered = filtered.filter(transaction => transaction.category === categoryFilter);
+      filtered = filtered.filter(transaction => (transaction.category_c || transaction.category) === categoryFilter);
     }
 
     setFilteredTransactions(filtered);
@@ -128,14 +128,14 @@ const Financials = () => {
   };
 
   const columns = [
-    { 
-      key: "date", 
+{ 
+      key: "date_c", 
       label: "Date", 
       sortable: true,
-      render: (value) => format(new Date(value), "MMM dd, yyyy")
+      render: (value) => format(new Date(value || Date.now()), "MMM dd, yyyy")
     },
     {
-      key: "type",
+      key: "type_c",
       label: "Type",
       render: (value) => (
         <span className={`status-badge ${
@@ -145,15 +145,15 @@ const Financials = () => {
         </span>
       )
     },
-    { key: "category", label: "Category", sortable: true },
-    { key: "description", label: "Description", sortable: true },
+{ key: "category_c", label: "Category", sortable: true },
+    { key: "description_c", label: "Description", sortable: true },
     { 
-      key: "amount", 
+      key: "amount_c", 
       label: "Amount", 
       sortable: true,
       render: (value, transaction) => (
-        <span className={transaction.type === "income" ? "text-success font-semibold" : "text-error font-semibold"}>
-          {transaction.type === "income" ? "+" : "-"}${value.toFixed(2)}
+        <span className={(transaction.type_c || transaction.type) === "income" ? "text-success font-semibold" : "text-error font-semibold"}>
+          {(transaction.type_c || transaction.type) === "income" ? "+" : "-"}${(value || 0).toFixed(2)}
         </span>
       )
     },

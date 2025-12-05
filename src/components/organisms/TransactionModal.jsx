@@ -17,12 +17,12 @@ const TransactionModal = ({ isOpen, onClose, transaction, onSave }) => {
 
   useEffect(() => {
     if (transaction) {
-      setFormData({
-        type: transaction.type || "income",
-        category: transaction.category || "",
-        description: transaction.description || "",
-        amount: transaction.amount?.toString() || "",
-        notes: transaction.notes || ""
+setFormData({
+        type: transaction.type_c || transaction.type || "income",
+        category: transaction.category_c || transaction.category || "",
+        description: transaction.description_c || transaction.description || "",
+        amount: transaction.amount_c?.toString() || transaction.amount?.toString() || "",
+        notes: transaction.notes_c || transaction.notes || ""
       });
     } else {
       setFormData({
@@ -40,9 +40,12 @@ const TransactionModal = ({ isOpen, onClose, transaction, onSave }) => {
     setLoading(true);
 
     try {
-      const transactionData = {
-        ...formData,
-        amount: parseFloat(formData.amount) || 0
+const transactionData = {
+        type_c: formData.type,
+        category_c: formData.category,
+        description_c: formData.description,
+        amount_c: parseFloat(formData.amount) || 0,
+        notes_c: formData.notes
       };
 
       await onSave(transactionData);

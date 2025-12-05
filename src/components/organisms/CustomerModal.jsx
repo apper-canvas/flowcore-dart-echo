@@ -16,11 +16,11 @@ const CustomerModal = ({ isOpen, onClose, customer, onSave }) => {
 
   useEffect(() => {
     if (customer) {
-      setFormData({
-        name: customer.name || "",
-        email: customer.email || "",
-        phone: customer.phone || "",
-        address: customer.address || ""
+setFormData({
+        name: customer.Name || customer.name || "",
+        email: customer.email_c || customer.email || "",
+        phone: customer.phone_c || customer.phone || "",
+        address: customer.address_c || customer.address || ""
       });
     } else {
       setFormData({

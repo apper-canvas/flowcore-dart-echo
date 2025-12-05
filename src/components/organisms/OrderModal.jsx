@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import customerService from "@/services/api/customerService";
+import productService from "@/services/api/productService";
 import ApperIcon from "@/components/ApperIcon";
-import FormField from "@/components/molecules/FormField";
 import Button from "@/components/atoms/Button";
 import DataTable from "@/components/organisms/DataTable";
-import productService from "@/services/api/productService";
-import customerService from "@/services/api/customerService";
+import FormField from "@/components/molecules/FormField";
 
 const OrderModal = ({ isOpen, onClose, order, onSave }) => {
   const [formData, setFormData] = useState({
@@ -33,10 +33,10 @@ const OrderModal = ({ isOpen, onClose, order, onSave }) => {
 
   useEffect(() => {
     if (order) {
-      setFormData({
-        customerId: order.customerId || "",
-        status: order.status || "pending",
-        notes: order.notes || ""
+setFormData({
+        customerId: order.customer_id_c || order.customerId || "",
+        status: order.status_c || order.status || "pending",
+        notes: order.notes_c || order.notes || ""
       });
       setOrderItems(order.items || []);
     } else {
@@ -80,17 +80,17 @@ const OrderModal = ({ isOpen, onClose, order, onSave }) => {
     const existingItemIndex = orderItems.findIndex(item => item.productId === newItem.productId);
     
     if (existingItemIndex >= 0) {
-      const updatedItems = [...orderItems];
-      updatedItems[existingItemIndex].quantity += parseInt(newItem.quantity);
-      updatedItems[existingItemIndex].total = updatedItems[existingItemIndex].quantity * product.price;
+const updatedItems = [...orderItems];
+      updatedItems[existingItemIndex].quantity_c += parseInt(newItem.quantity);
+      updatedItems[existingItemIndex].total_c = updatedItems[existingItemIndex].quantity_c * (product.price_c || product.price);
       setOrderItems(updatedItems);
     } else {
-      const item = {
+const item = {
         productId: newItem.productId,
-        productName: product.name,
-        quantity: parseInt(newItem.quantity),
-        unitPrice: product.price,
-        total: parseInt(newItem.quantity) * product.price
+        product_name_c: product.Name || product.name,
+        quantity_c: parseInt(newItem.quantity),
+        unit_price_c: product.price_c || product.price,
+        total_c: parseInt(newItem.quantity) * (product.price_c || product.price)
       };
       setOrderItems([...orderItems, item]);
     }
@@ -103,7 +103,7 @@ const OrderModal = ({ isOpen, onClose, order, onSave }) => {
   };
 
   const calculateTotals = () => {
-    const subtotal = orderItems.reduce((sum, item) => sum + item.total, 0);
+const subtotal = orderItems.reduce((sum, item) => sum + (item.total_c || item.total || 0), 0);
     const tax = subtotal * 0.08; // 8% tax
     const total = subtotal + tax;
     
@@ -125,16 +125,17 @@ const OrderModal = ({ isOpen, onClose, order, onSave }) => {
 
     setLoading(true);
 
-    try {
+try {
       const { subtotal, tax, total } = calculateTotals();
       
       const orderData = {
-        ...formData,
-        customerId: parseInt(formData.customerId),
+        customer_id_c: parseInt(formData.customerId),
+        status_c: formData.status,
+        notes_c: formData.notes,
         items: orderItems,
-        subtotal,
-        tax,
-        total
+        subtotal_c: subtotal,
+        tax_c: tax,
+        total_c: total
       };
 
       await onSave(orderData);
@@ -159,14 +160,14 @@ const OrderModal = ({ isOpen, onClose, order, onSave }) => {
 
   if (!isOpen) return null;
 
-  const customerOptions = customers.map(customer => ({
+const customerOptions = customers.map(customer => ({
     value: customer.Id.toString(),
-    label: customer.name
+    label: customer.Name || customer.name
   }));
 
-  const productOptions = products.map(product => ({
+const productOptions = products.map(product => ({
     value: product.Id.toString(),
-    label: `${product.name} - $${product.price.toFixed(2)}`
+    label: `${product.Name || product.name} - $${(product.price_c || product.price || 0).toFixed(2)}`
   }));
 
   const statusOptions = [
@@ -176,20 +177,20 @@ const OrderModal = ({ isOpen, onClose, order, onSave }) => {
     { value: "cancelled", label: "Cancelled" }
   ];
 
-  const itemColumns = [
-    { key: "productName", label: "Product", sortable: true },
-    { key: "quantity", label: "Quantity", sortable: true },
+const itemColumns = [
+    { key: "product_name_c", label: "Product", sortable: true },
+    { key: "quantity_c", label: "Quantity", sortable: true },
     { 
-      key: "unitPrice", 
+      key: "unit_price_c", 
       label: "Unit Price", 
       sortable: true,
-      render: (value) => `$${value.toFixed(2)}`
+      render: (value) => `$${(value || 0).toFixed(2)}`
     },
     { 
-      key: "total", 
+      key: "total_c", 
       label: "Total", 
       sortable: true,
-      render: (value) => `$${value.toFixed(2)}`
+      render: (value) => `$${(value || 0).toFixed(2)}`
     },
     {
       key: "actions",

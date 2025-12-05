@@ -1,87 +1,214 @@
-import mockData from "../mockData/customers.json";
+import { getApperClient } from "@/services/apperClient";
 
 class CustomerService {
-  constructor() {
-    this.customers = [...mockData];
-  }
-
   async getAll() {
-    await this.delay();
-    return [...this.customers];
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) throw new Error("ApperClient not initialized");
+
+      const response = await apperClient.fetchRecords('customer_c', {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "email_c"}},
+          {"field": {"Name": "phone_c"}},
+          {"field": {"Name": "address_c"}},
+          {"field": {"Name": "CreatedOn"}},
+          {"field": {"Name": "ModifiedOn"}}
+        ],
+        orderBy: [{"fieldName": "Name", "sorttype": "ASC"}]
+      });
+
+      if (!response.success) {
+        console.error(response.message);
+        return [];
+      }
+
+      return response.data || [];
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+      return [];
+    }
   }
 
   async getById(id) {
-    await this.delay();
-    const customer = this.customers.find(c => c.Id === parseInt(id));
-    if (!customer) {
-      throw new Error("Customer not found");
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) throw new Error("ApperClient not initialized");
+
+      const response = await apperClient.getRecordById('customer_c', parseInt(id), {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "email_c"}},
+          {"field": {"Name": "phone_c"}},
+          {"field": {"Name": "address_c"}},
+          {"field": {"Name": "CreatedOn"}}
+        ]
+      });
+
+      if (!response.success) {
+        throw new Error(response.message || "Customer not found");
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching customer ${id}:`, error);
+      throw error;
     }
-    return { ...customer };
   }
 
   async create(customerData) {
-    await this.delay();
-    const newCustomer = {
-      Id: this.getNextId(),
-      ...customerData,
-      totalOrders: 0,
-      totalSpent: 0,
-      createdAt: new Date().toISOString()
-    };
-    this.customers.push(newCustomer);
-    return { ...newCustomer };
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) throw new Error("ApperClient not initialized");
+
+      const params = {
+        records: [{
+          Name: customerData.name || customerData.Name || '',
+          email_c: customerData.email || customerData.email_c || '',
+          phone_c: customerData.phone || customerData.phone_c || '',
+          address_c: customerData.address || customerData.address_c || ''
+        }]
+      };
+
+      const response = await apperClient.createRecord('customer_c', params);
+
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+
+        if (failed.length > 0) {
+          console.error(`Failed to create ${failed.length} customer records:`, failed);
+        }
+
+        return successful.length > 0 ? successful[0].data : null;
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error creating customer:", error);
+      throw error;
+    }
   }
 
   async update(id, customerData) {
-    await this.delay();
-    const index = this.customers.findIndex(c => c.Id === parseInt(id));
-    if (index === -1) {
-      throw new Error("Customer not found");
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) throw new Error("ApperClient not initialized");
+
+      const params = {
+        records: [{
+          Id: parseInt(id),
+          Name: customerData.name || customerData.Name || '',
+          email_c: customerData.email || customerData.email_c || '',
+          phone_c: customerData.phone || customerData.phone_c || '',
+          address_c: customerData.address || customerData.address_c || ''
+        }]
+      };
+
+      const response = await apperClient.updateRecord('customer_c', params);
+
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+
+        if (failed.length > 0) {
+          console.error(`Failed to update ${failed.length} customer records:`, failed);
+        }
+
+        return successful.length > 0 ? successful[0].data : null;
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error updating customer:", error);
+      throw error;
     }
-    
-    this.customers[index] = {
-      ...this.customers[index],
-      ...customerData,
-      Id: parseInt(id)
-    };
-    
-    return { ...this.customers[index] };
   }
 
   async delete(id) {
-    await this.delay();
-    const index = this.customers.findIndex(c => c.Id === parseInt(id));
-    if (index === -1) {
-      throw new Error("Customer not found");
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) throw new Error("ApperClient not initialized");
+
+      const response = await apperClient.deleteRecord('customer_c', {
+        RecordIds: [parseInt(id)]
+      });
+
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const failed = response.results.filter(r => !r.success);
+        if (failed.length > 0) {
+          console.error(`Failed to delete ${failed.length} customer records:`, failed);
+          return false;
+        }
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Error deleting customer:", error);
+      throw error;
     }
-    
-    this.customers.splice(index, 1);
-    return true;
   }
 
   async updateCustomerStats(customerId, orderTotal) {
-    await this.delay();
-    const customer = this.customers.find(c => c.Id === parseInt(customerId));
-    if (customer) {
-      customer.totalOrders += 1;
-      customer.totalSpent += orderTotal;
+    // This functionality would be handled by database triggers or calculated fields
+    // in a real implementation, so we'll keep it as a placeholder
+    try {
+      console.log(`Customer ${customerId} stats would be updated with order total ${orderTotal}`);
+      return true;
+    } catch (error) {
+      console.error("Error updating customer stats:", error);
+      return false;
     }
   }
 
   async getTopCustomers(limit = 5) {
-    await this.delay();
-    return this.customers
-      .sort((a, b) => b.totalSpent - a.totalSpent)
-      .slice(0, limit);
-  }
+    try {
+      // This would require aggregated data from orders
+      // For now, we'll return customers ordered by creation date as a placeholder
+      const apperClient = getApperClient();
+      if (!apperClient) throw new Error("ApperClient not initialized");
 
-  getNextId() {
-    return Math.max(...this.customers.map(c => c.Id), 0) + 1;
-  }
+      const response = await apperClient.fetchRecords('customer_c', {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "email_c"}},
+          {"field": {"Name": "CreatedOn"}}
+        ],
+        orderBy: [{"fieldName": "CreatedOn", "sorttype": "DESC"}],
+        pagingInfo: {"limit": limit, "offset": 0}
+      });
 
-  delay(ms = 250) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+      if (!response.success) {
+        console.error(response.message);
+        return [];
+      }
+
+      return response.data || [];
+    } catch (error) {
+      console.error("Error fetching top customers:", error);
+      return [];
+    }
   }
 }
+
+export default new CustomerService();
 
 export default new CustomerService();

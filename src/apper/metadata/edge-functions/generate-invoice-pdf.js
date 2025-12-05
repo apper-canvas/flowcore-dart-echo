@@ -51,9 +51,9 @@ export default apper.serve(async (req) => {
     // Invoice Details
     pdf.setFontSize(10);
     pdf.setTextColor(40, 40, 40);
-    pdf.text(`Invoice #: INV-${order.orderNumber}`, 140, 45);
-    pdf.text(`Date: ${new Date(order.createdAt).toLocaleDateString()}`, 140, 50);
-    pdf.text(`Order #: ${order.orderNumber}`, 140, 55);
+pdf.text(`Invoice #: INV-${order.order_number_c}`, 140, 45);
+    pdf.text(`Date: ${new Date(order.CreatedOn).toLocaleDateString()}`, 140, 50);
+    pdf.text(`Order #: ${order.order_number_c}`, 140, 55);
     
     // Bill To Section
     pdf.setFontSize(12);
@@ -61,10 +61,10 @@ export default apper.serve(async (req) => {
     pdf.text("Bill To:", 20, 75);
     
     pdf.setFontSize(10);
-    pdf.text(customer.name || 'N/A', 20, 85);
-    pdf.text(customer.email || 'N/A', 20, 90);
-    if (customer.phone) {
-      pdf.text(customer.phone, 20, 95);
+pdf.text(customer.Name || 'N/A', 20, 85);
+    pdf.text(customer.email_c || 'N/A', 20, 90);
+    if (customer.phone_c) {
+      pdf.text(customer.phone_c, 20, 95);
     }
     
     // Table Header
@@ -86,8 +86,8 @@ export default apper.serve(async (req) => {
     const items = order.items || [];
     let subtotal = 0;
     
-    items.forEach((item, index) => {
-      const itemTotal = (item.quantity || 0) * (item.price || 0);
+items.forEach((item, index) => {
+      const itemTotal = (item.quantity_c || 0) * (item.unit_price_c || 0);
       subtotal += itemTotal;
       
       // Alternate row colors
@@ -96,9 +96,9 @@ export default apper.serve(async (req) => {
         pdf.rect(20, currentY - 3, 170, 8, 'F');
       }
       
-      pdf.text(item.name || 'N/A', 25, currentY);
-      pdf.text(String(item.quantity || 0), 120, currentY);
-      pdf.text(`$${(item.price || 0).toFixed(2)}`, 140, currentY);
+pdf.text(item.product_name_c || 'N/A', 25, currentY);
+      pdf.text(String(item.quantity_c || 0), 120, currentY);
+      pdf.text(`$${(item.unit_price_c || 0).toFixed(2)}`, 140, currentY);
       pdf.text(`$${itemTotal.toFixed(2)}`, 165, currentY);
       
       currentY += 10;
@@ -136,7 +136,7 @@ export default apper.serve(async (req) => {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="invoice-${order.orderNumber}.pdf"`
+'Content-Disposition': `attachment; filename="invoice-${order.order_number_c}.pdf"`
       }
     });
     

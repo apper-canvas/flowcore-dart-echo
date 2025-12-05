@@ -44,11 +44,12 @@ const Customers = () => {
       
       // Group orders by customer ID for quick lookup
       const ordersByCustomer = {};
-      ordersData.forEach(order => {
-        if (!ordersByCustomer[order.customerId]) {
-          ordersByCustomer[order.customerId] = [];
+ordersData.forEach(order => {
+        const customerId = order.customer_id_c || order.customerId;
+        if (!ordersByCustomer[customerId]) {
+          ordersByCustomer[customerId] = [];
         }
-        ordersByCustomer[order.customerId].push(order);
+        ordersByCustomer[customerId].push(order);
       });
       setCustomerOrders(ordersByCustomer);
       
@@ -65,10 +66,10 @@ const Customers = () => {
 
     // Search filter
     if (searchQuery) {
-      filtered = filtered.filter(customer =>
-        customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        customer.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        customer.phone.includes(searchQuery)
+filtered = filtered.filter(customer =>
+        (customer.Name || customer.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (customer.email_c || customer.email || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (customer.phone_c || customer.phone || '').includes(searchQuery)
       );
     }
 
@@ -127,14 +128,14 @@ const Customers = () => {
   };
 
   const getCustomerTotalSpent = (customerId) => {
-    const orders = customerOrders[customerId] || [];
-    return orders.reduce((total, order) => total + order.total, 0);
+const orders = customerOrders[customerId] || [];
+    return orders.reduce((total, order) => total + (order.total_c || order.total || 0), 0);
   };
 
-  const columns = [
-    { key: "name", label: "Name", sortable: true },
-    { key: "email", label: "Email", sortable: true },
-    { key: "phone", label: "Phone", sortable: true },
+const columns = [
+    { key: "Name", label: "Name", sortable: true },
+    { key: "email_c", label: "Email", sortable: true },
+    { key: "phone_c", label: "Phone", sortable: true },
     { 
       key: "totalOrders", 
       label: "Orders", 
@@ -148,7 +149,7 @@ const Customers = () => {
       render: (value, customer) => `$${getCustomerTotalSpent(customer.Id).toFixed(2)}`
     },
     { 
-      key: "createdAt", 
+      key: "CreatedOn", 
       label: "Since", 
       sortable: true,
       render: (value) => format(new Date(value), "MMM yyyy")

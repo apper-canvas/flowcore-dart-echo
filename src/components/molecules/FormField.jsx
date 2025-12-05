@@ -1,7 +1,7 @@
 import React from "react";
+import Select from "@/components/atoms/Select";
 import Label from "@/components/atoms/Label";
 import Input from "@/components/atoms/Input";
-import Select from "@/components/atoms/Select";
 import { cn } from "@/utils/cn";
 
 const FormField = ({ 
@@ -13,7 +13,7 @@ const FormField = ({
   className,
   ...props 
 }) => {
-  const renderInput = () => {
+const renderInput = () => {
     if (type === "select") {
       return (
         <Select {...props}>
@@ -30,7 +30,7 @@ const FormField = ({
     return <Input type={type} {...props} />;
   };
 
-  return (
+return (
     <div className={cn("space-y-2", className)}>
       {label && (
         <Label>

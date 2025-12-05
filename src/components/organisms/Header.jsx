@@ -1,12 +1,17 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useAuth } from "@/layouts/Root";
 import ApperIcon from "@/components/ApperIcon";
 import SearchBar from "@/components/molecules/SearchBar";
+import Button from "@/components/atoms/Button";
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { user } = useSelector(state => state.user);
+  const { logout } = useAuth();
 
   const navigationItems = [
     { name: "Dashboard", href: "/", icon: "BarChart3" },
@@ -15,7 +20,6 @@ const Header = () => {
     { name: "Customers", href: "/customers", icon: "Users" },
     { name: "Financials", href: "/financials", icon: "DollarSign" }
   ];
-
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
@@ -110,7 +114,7 @@ const Header = () => {
               />
             </form>
             <nav className="space-y-1">
-              {navigationItems.map((item) => (
+{navigationItems.map((item) => (
                 <NavLink
                   key={item.name}
                   to={item.href}
@@ -127,6 +131,23 @@ const Header = () => {
                   {item.name}
                 </NavLink>
               ))}
+              
+              {/* User Profile & Logout */}
+              <div className="border-t pt-4 mt-4">
+                {user && (
+                  <div className="px-3 py-2 text-sm text-gray-600 mb-2">
+                    Welcome, {user.firstName} {user.lastName}
+                  </div>
+                )}
+                <Button
+                  variant="ghost"
+                  onClick={logout}
+                  className="w-full justify-start px-3 py-3 text-gray-600 hover:text-red-600 hover:bg-red-50"
+                >
+                  <ApperIcon name="LogOut" className="w-5 h-5 mr-3" />
+                  Sign Out
+                </Button>
+              </div>
             </nav>
           </div>
         </div>

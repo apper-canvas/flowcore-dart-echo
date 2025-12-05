@@ -21,16 +21,16 @@ const ProductModal = ({ isOpen, onClose, product, onSave }) => {
 
   useEffect(() => {
     if (product) {
-      setFormData({
-        sku: product.sku || "",
-        name: product.name || "",
-        description: product.description || "",
-        category: product.category || "",
-        price: product.price?.toString() || "",
-        cost: product.cost?.toString() || "",
-        stockLevel: product.stockLevel?.toString() || "",
-        reorderPoint: product.reorderPoint?.toString() || "",
-        unit: product.unit || "pcs"
+setFormData({
+        sku: product.sku_c || product.sku || "",
+        name: product.Name || product.name || "",
+        description: product.description_c || product.description || "",
+        category: product.category_c || product.category || "",
+        price: product.price_c?.toString() || product.price?.toString() || "",
+        cost: product.cost_c?.toString() || product.cost?.toString() || "",
+        stockLevel: product.stock_level_c?.toString() || product.stockLevel?.toString() || "",
+        reorderPoint: product.reorder_point_c?.toString() || product.reorderPoint?.toString() || "",
+        unit: product.unit_c || product.unit || "pcs"
       });
     } else {
       setFormData({
@@ -52,12 +52,16 @@ const ProductModal = ({ isOpen, onClose, product, onSave }) => {
     setLoading(true);
 
     try {
-      const productData = {
-        ...formData,
-        price: parseFloat(formData.price) || 0,
-        cost: parseFloat(formData.cost) || 0,
-        stockLevel: parseInt(formData.stockLevel) || 0,
-        reorderPoint: parseInt(formData.reorderPoint) || 0
+const productData = {
+        name: formData.name,
+        sku_c: formData.sku,
+        description_c: formData.description,
+        category_c: formData.category,
+        price_c: parseFloat(formData.price) || 0,
+        cost_c: parseFloat(formData.cost) || 0,
+        stock_level_c: parseInt(formData.stockLevel) || 0,
+        reorder_point_c: parseInt(formData.reorderPoint) || 0,
+        unit_c: formData.unit
       };
 
       await onSave(productData);

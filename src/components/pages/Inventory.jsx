@@ -51,16 +51,16 @@ const Inventory = () => {
 
     // Search filter
     if (searchQuery) {
-      filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.sku.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchQuery.toLowerCase())
+filtered = filtered.filter(product =>
+        (product.Name || product.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (product.sku_c || product.sku || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (product.category_c || product.category || '').toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     // Category filter
-    if (categoryFilter) {
-      filtered = filtered.filter(product => product.category === categoryFilter);
+if (categoryFilter) {
+      filtered = filtered.filter(product => (product.category_c || product.category) === categoryFilter);
     }
 
     // Status filter
@@ -74,9 +74,11 @@ const Inventory = () => {
     setFilteredProducts(filtered);
   };
 
-  const getStockStatus = (product) => {
-    if (product.stockLevel === 0) return "out-of-stock";
-    if (product.stockLevel <= product.reorderPoint) return "low-stock";
+const getStockStatus = (product) => {
+    const stockLevel = product.stock_level_c || product.stockLevel || 0;
+    const reorderPoint = product.reorder_point_c || product.reorderPoint || 0;
+    if (stockLevel === 0) return "out-of-stock";
+    if (stockLevel <= reorderPoint) return "low-stock";
     return "in-stock";
   };
 
@@ -121,17 +123,17 @@ const Inventory = () => {
     setIsModalOpen(true);
   };
 
-  const columns = [
-    { key: "sku", label: "SKU", sortable: true },
-    { key: "name", label: "Product Name", sortable: true },
-    { key: "category", label: "Category", sortable: true },
+const columns = [
+    { key: "sku_c", label: "SKU", sortable: true },
+    { key: "Name", label: "Product Name", sortable: true },
+    { key: "category_c", label: "Category", sortable: true },
     { 
-      key: "price", 
+      key: "price_c", 
       label: "Price", 
       sortable: true,
-      render: (value) => `$${value.toFixed(2)}`
+      render: (value) => `$${(value || 0).toFixed(2)}`
     },
-    { key: "stockLevel", label: "Stock", sortable: true },
+    { key: "stock_level_c", label: "Stock", sortable: true },
     {
       key: "status",
       label: "Status",
@@ -180,7 +182,7 @@ const Inventory = () => {
     );
   }
 
-  const categories = [...new Set(products.map(p => p.category))];
+const categories = [...new Set(products.map(p => p.category_c || p.category).filter(Boolean))];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

@@ -59,18 +59,18 @@ const [selectedOrder, setSelectedOrder] = useState(null);
 
     // Search filter
     if (searchQuery) {
-      filtered = filtered.filter(order => {
-        const customer = customers.find(c => c.Id === order.customerId);
+filtered = filtered.filter(order => {
+        const customer = customers.find(c => c.Id === (order.customer_id_c || order.customerId));
         return (
-          order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          customer?.name.toLowerCase().includes(searchQuery.toLowerCase())
+          (order.order_number_c || order.orderNumber || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (customer?.Name || customer?.name || '').toLowerCase().includes(searchQuery.toLowerCase())
         );
       });
     }
 
     // Status filter
-    if (statusFilter) {
-      filtered = filtered.filter(order => order.status === statusFilter);
+if (statusFilter) {
+      filtered = filtered.filter(order => (order.status_c || order.status) === statusFilter);
     }
 
     setFilteredOrders(filtered);
@@ -96,7 +96,7 @@ const [selectedOrder, setSelectedOrder] = useState(null);
   };
 
   const handleDeleteOrder = async (order) => {
-    if (window.confirm(`Are you sure you want to delete order ${order.orderNumber}?`)) {
+if (window.confirm(`Are you sure you want to delete order ${order.order_number_c || order.orderNumber}?`)) {
       try {
         await orderService.delete(order.Id);
         setOrders(orders.filter(o => o.Id !== order.Id));
@@ -133,32 +133,32 @@ const handleEditOrder = (order) => {
     }
   };
 
-  const getCustomerName = (customerId) => {
+const getCustomerName = (customerId) => {
     const customer = customers.find(c => c.Id === customerId);
-    return customer ? customer.name : "Unknown Customer";
+    return customer ? (customer.Name || customer.name) : "Unknown Customer";
   };
 
-  const columns = [
-    { key: "orderNumber", label: "Order #", sortable: true },
+const columns = [
+    { key: "order_number_c", label: "Order #", sortable: true },
     { 
-      key: "customerId", 
+      key: "customer_id_c", 
       label: "Customer", 
       sortable: true,
       render: (value) => getCustomerName(value)
     },
     {
-      key: "status",
+      key: "status_c",
       label: "Status",
       render: (value) => <StatusBadge status={value} type="order" />
     },
     { 
-      key: "total", 
+      key: "total_c", 
       label: "Total", 
       sortable: true,
-      render: (value) => `$${value.toFixed(2)}`
+      render: (value) => `$${(value || 0).toFixed(2)}`
     },
     { 
-      key: "createdAt", 
+      key: "CreatedOn", 
       label: "Date", 
       sortable: true,
       render: (value) => format(new Date(value), "MMM dd, yyyy")
@@ -168,8 +168,8 @@ const handleEditOrder = (order) => {
 label: "Actions",
       render: (value, order) => (
         <div className="flex items-center gap-2">
-          <Select
-            value={order.status}
+<Select
+            value={order.status_c || order.status}
             onChange={(e) => handleStatusChange(order, e.target.value)}
             className="w-32 text-xs"
           >
@@ -178,7 +178,7 @@ label: "Actions",
             <option value="completed">Completed</option>
             <option value="cancelled">Cancelled</option>
           </Select>
-          {order.status === 'completed' && (
+{(order.status_c || order.status) === 'completed' && (
             <Button
               variant="ghost"
               size="sm"
@@ -240,8 +240,8 @@ label: "Actions",
 
       {/* Order Status Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        {["pending", "processing", "completed", "cancelled"].map(status => {
-          const count = orders.filter(o => o.status === status).length;
+{["pending", "processing", "completed", "cancelled"].map(status => {
+          const count = orders.filter(o => (o.status_c || o.status) === status).length;
           return (
             <div key={status} className="card p-4 text-center">
               <div className="text-2xl font-bold text-gray-900 mb-1">{count}</div>
