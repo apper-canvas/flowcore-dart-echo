@@ -32,9 +32,9 @@ const [isModalOpen, setIsModalOpen] = useState(false);
     loadTransactions();
   }, []);
 
-  useEffect(() => {
+useEffect(() => {
     filterTransactions();
-}, [transactions, searchQuery, typeFilter, categoryFilter, currentPage, itemsPerPage]);
+  }, [transactions, searchQuery, typeFilter, categoryFilter]);
 
   const loadTransactions = async () => {
     setLoading(true);
@@ -56,6 +56,7 @@ const [isModalOpen, setIsModalOpen] = useState(false);
   };
 
 const filterTransactions = () => {
+    const previousFiltered = filteredTransactions;
     let filtered = [...transactions];
 
     // Search filter
@@ -76,9 +77,13 @@ const filterTransactions = () => {
       filtered = filtered.filter(transaction => (transaction.category_c || transaction.category) === categoryFilter);
     }
 
-setFilteredTransactions(filtered);
-    // Reset to first page when filters change
-    setCurrentPage(1);
+    setFilteredTransactions(filtered);
+    
+    // Only reset to first page if the filtered results actually changed
+    // This prevents page reset during normal pagination
+    if (JSON.stringify(previousFiltered) !== JSON.stringify(filtered)) {
+      setCurrentPage(1);
+    }
   };
 
   const handleSaveTransaction = async (transactionData) => {

@@ -34,14 +34,20 @@ const DataTable = ({
     });
   }, [data, sortBy, sortDirection]);
 // Handle pagination if provided - must be called before early returns
-  const paginatedData = React.useMemo(() => {
+const paginatedData = React.useMemo(() => {
     if (!pagination || !sortedData) return sortedData;
     
     const { currentPage, itemsPerPage } = pagination;
     const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
     
-    // Ensure we don't go beyond array bounds
-    return sortedData.slice(startIndex, startIndex + itemsPerPage);
+    // Ensure we don't go beyond array bounds and handle edge cases
+    if (startIndex >= sortedData.length && sortedData.length > 0) {
+      // If current page is beyond available data, return empty array
+      return [];
+    }
+    
+    return sortedData.slice(startIndex, endIndex);
   }, [sortedData, pagination]);
 
   if (loading) {
