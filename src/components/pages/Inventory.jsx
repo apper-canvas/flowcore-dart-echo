@@ -149,6 +149,18 @@ const columns = [
       )
     },
     { 
+      key: "date_c", 
+      label: "Date", 
+      sortable: true,
+      render: (value) => value ? new Date(value).toLocaleDateString() : 'N/A'
+    },
+    { 
+      key: "CreatedOn", 
+      label: "Created On", 
+      sortable: true,
+      render: (value) => value ? new Date(value).toLocaleDateString() : 'N/A'
+    },
+    { 
       key: "CreatedBy", 
       label: "Created By", 
       sortable: true,

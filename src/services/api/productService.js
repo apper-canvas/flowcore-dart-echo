@@ -19,6 +19,7 @@ const response = await apperClient.fetchRecords('product_c', {
           {"field": {"Name": "stock_level_c"}},
           {"field": {"Name": "reorder_point_c"}},
           {"field": {"Name": "unit_c"}},
+          {"field": {"Name": "date_c"}},
           {"field": {"Name": "CreatedOn"}},
           {"field": {"Name": "CreatedBy"}},
           {"field": {"Name": "ModifiedOn"}},
@@ -57,6 +58,7 @@ fields: [
           {"field": {"Name": "stock_level_c"}},
           {"field": {"Name": "reorder_point_c"}},
           {"field": {"Name": "unit_c"}},
+          {"field": {"Name": "date_c"}},
           {"field": {"Name": "CreatedOn"}},
           {"field": {"Name": "CreatedBy"}},
           {"field": {"Name": "ModifiedOn"}},
@@ -91,7 +93,8 @@ const params = {
           cost_c: parseFloat(productData.cost || productData.cost_c || 0),
           stock_level_c: parseInt(productData.stockLevel || productData.stock_level_c || 0),
           reorder_point_c: parseInt(productData.reorderPoint || productData.reorder_point_c || 0),
-          unit_c: productData.unit || productData.unit_c || 'pcs'
+          unit_c: productData.unit || productData.unit_c || 'pcs',
+          date_c: productData.date || productData.date_c || ''
         }]
       };
 
@@ -137,7 +140,8 @@ const params = {
           cost_c: parseFloat(productData.cost || productData.cost_c || 0),
           stock_level_c: parseInt(productData.stockLevel || productData.stock_level_c || 0),
           reorder_point_c: parseInt(productData.reorderPoint || productData.reorder_point_c || 0),
-          unit_c: productData.unit || productData.unit_c || 'pcs'
+          unit_c: productData.unit || productData.unit_c || 'pcs',
+          date_c: productData.date || productData.date_c || ''
         }]
       };
 

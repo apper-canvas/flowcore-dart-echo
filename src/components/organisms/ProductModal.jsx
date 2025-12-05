@@ -5,7 +5,7 @@ import FormField from "@/components/molecules/FormField";
 import Button from "@/components/atoms/Button";
 
 const ProductModal = ({ isOpen, onClose, product, onSave }) => {
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     sku: "",
     name: "",
     description: "",
@@ -14,7 +14,8 @@ const ProductModal = ({ isOpen, onClose, product, onSave }) => {
     cost: "",
     stockLevel: "",
     reorderPoint: "",
-    unit: "pcs"
+    unit: "pcs",
+    date: ""
   });
   
   const [loading, setLoading] = useState(false);
@@ -30,7 +31,8 @@ setFormData({
         cost: product.cost_c?.toString() || product.cost?.toString() || "",
         stockLevel: product.stock_level_c?.toString() || product.stockLevel?.toString() || "",
         reorderPoint: product.reorder_point_c?.toString() || product.reorderPoint?.toString() || "",
-        unit: product.unit_c || product.unit || "pcs"
+        unit: product.unit_c || product.unit || "pcs",
+        date: product.date_c || product.date || ""
       });
     } else {
       setFormData({
@@ -61,7 +63,8 @@ const productData = {
         cost_c: parseFloat(formData.cost) || 0,
         stock_level_c: parseInt(formData.stockLevel) || 0,
         reorder_point_c: parseInt(formData.reorderPoint) || 0,
-        unit_c: formData.unit
+        unit_c: formData.unit,
+        date_c: formData.date
       };
 
       await onSave(productData);
@@ -133,7 +136,7 @@ const productData = {
               onChange={handleChange}
               placeholder="Enter product name"
               required
-            />
+/>
           </div>
 
           <FormField
@@ -165,6 +168,14 @@ const productData = {
               required
             />
           </div>
+
+          <FormField
+            label="Date"
+            type="date"
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
+          />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
