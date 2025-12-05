@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import MetricCard from "@/components/molecules/MetricCard";
-import DataTable from "@/components/organisms/DataTable";
-import Button from "@/components/atoms/Button";
-import Loading from "@/components/ui/Loading";
-import ErrorView from "@/components/ui/ErrorView";
-import ApperIcon from "@/components/ApperIcon";
-import productService from "@/services/api/productService";
+import { format } from "date-fns";
+import transactionService from "@/services/api/transactionService";
 import orderService from "@/services/api/orderService";
 import customerService from "@/services/api/customerService";
-import transactionService from "@/services/api/transactionService";
-import { format } from "date-fns";
+import productService from "@/services/api/productService";
+import ApperIcon from "@/components/ApperIcon";
+import Loading from "@/components/ui/Loading";
+import ErrorView from "@/components/ui/ErrorView";
+import Button from "@/components/atoms/Button";
+import DataTable from "@/components/organisms/DataTable";
+import Orders from "@/components/pages/Orders";
+import MetricCard from "@/components/molecules/MetricCard";
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState({
@@ -134,18 +135,35 @@ const orderColumns = [
 const stockColumns = [
     { key: "Name", label: "Product", sortable: true },
     { key: "sku_c", label: "SKU", sortable: true },
-    { key: "stock_level_c", label: "Current Stock", sortable: true },
-    { key: "reorder_point_c", label: "Reorder Point", sortable: true },
-    {
+    { 
+      key: "stock_level_c", 
+      label: "Current Stock", 
+      sortable: true,
+      render: (value) => (product?.stock_level_c ?? 0)
+    },
+    { 
+      key: "reorder_point_c", 
+      label: "Reorder Point", 
+      sortable: true,
+      render: (value) => (product?.reorder_point_c ?? 0)
+    },
+{
       key: "status",
       label: "Status",
-      render: (value, product) => (
-        <span className={`status-badge ${
-          (product.stock_level_c || 0) === 0 ? 'status-out-of-stock' : 'status-low-stock'
-        }`}>
-          {(product.stock_level_c || 0) === 0 ? 'Out of Stock' : 'Low Stock'}
-        </span>
-      )
+      render: (value, product) => {
+        const stockLevel = product?.stock_level_c ?? 0;
+        const reorderPoint = product?.reorder_point_c ?? 0;
+        
+        return (
+          <span className={`status-badge ${
+            stockLevel === 0 ? 'status-out-of-stock' : 
+            stockLevel <= reorderPoint ? 'status-low-stock' : 'status-in-stock'
+          }`}>
+            {stockLevel === 0 ? 'Out of Stock' : 
+             stockLevel <= reorderPoint ? 'Low Stock' : 'In Stock'}
+          </span>
+        )
+      }
     }
   ];
 
