@@ -46,29 +46,60 @@ ERP System
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex space-x-8">
+<nav className="hidden lg:flex space-x-8">
             {navigationItems.map((item) => (
-              <NavLink
-                key={item.name}
-                to={item.href}
-                className={({ isActive }) =>
-                  `flex items-center gap-2 px-3 py-2 text-sm font-medium transition-all duration-200 relative ${
-                    isActive
-                      ? "text-primary"
-                      : "text-gray-600 hover:text-primary"
-                  }`
-                }
-              >
-                {({ isActive }) => (
+              <div key={item.name} className="relative group">
+                {item.children ? (
                   <>
-                    <ApperIcon name={item.icon} className="w-4 h-4" />
-                    {item.name}
-                    {isActive && (
-                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-accent"></div>
-                    )}
+                    <div className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary cursor-pointer transition-all duration-200">
+                      <ApperIcon name={item.icon} className="w-4 h-4" />
+                      {item.name}
+                      <ApperIcon name="ChevronDown" className="w-3 h-3" />
+                    </div>
+                    <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                      <div className="py-1">
+                        {item.children.map((child) => (
+                          <NavLink
+                            key={child.name}
+                            to={child.href}
+                            className={({ isActive }) =>
+                              `flex items-center gap-3 px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                                isActive
+                                  ? "text-primary bg-primary/5"
+                                  : "text-gray-600 hover:text-primary hover:bg-gray-50"
+                              }`
+                            }
+                          >
+                            <ApperIcon name={child.icon} className="w-4 h-4" />
+                            {child.name}
+                          </NavLink>
+                        ))}
+                      </div>
+                    </div>
                   </>
+                ) : (
+                  <NavLink
+                    to={item.href}
+                    className={({ isActive }) =>
+                      `flex items-center gap-2 px-3 py-2 text-sm font-medium transition-all duration-200 relative ${
+                        isActive
+                          ? "text-primary"
+                          : "text-gray-600 hover:text-primary"
+                      }`
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        <ApperIcon name={item.icon} className="w-4 h-4" />
+                        {item.name}
+                        {isActive && (
+                          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-accent"></div>
+                        )}
+                      </>
+                    )}
+                  </NavLink>
                 )}
-              </NavLink>
+              </div>
             ))}
           </nav>
 {/* Mobile Menu Button */}
@@ -91,21 +122,50 @@ ERP System
           <div className="px-4 py-2">
             <nav className="space-y-1">
 {navigationItems.map((item) => (
-                <NavLink
-                  key={item.name}
-                  to={item.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-md transition-all duration-200 ${
-                      isActive
-                        ? "text-primary bg-primary/5"
-                        : "text-gray-600 hover:text-primary hover:bg-gray-50"
-                    }`
-                  }
-                >
-                  <ApperIcon name={item.icon} className="w-5 h-5" />
-                  {item.name}
-                </NavLink>
+                <div key={item.name}>
+                  {item.children ? (
+                    <>
+                      <div className="flex items-center gap-3 px-3 py-3 text-sm font-medium text-gray-600 rounded-md">
+                        <ApperIcon name={item.icon} className="w-5 h-5" />
+                        {item.name}
+                      </div>
+                      <div className="ml-4 space-y-1">
+                        {item.children.map((child) => (
+                          <NavLink
+                            key={child.name}
+                            to={child.href}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className={({ isActive }) =>
+                              `flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                                isActive
+                                  ? "text-primary bg-primary/5"
+                                  : "text-gray-600 hover:text-primary hover:bg-gray-50"
+                              }`
+                            }
+                          >
+                            <ApperIcon name={child.icon} className="w-4 h-4" />
+                            {child.name}
+                          </NavLink>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <NavLink
+                      to={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={({ isActive }) =>
+                        `flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-md transition-all duration-200 ${
+                          isActive
+                            ? "text-primary bg-primary/5"
+                            : "text-gray-600 hover:text-primary hover:bg-gray-50"
+                        }`
+                      }
+                    >
+                      <ApperIcon name={item.icon} className="w-5 h-5" />
+                      {item.name}
+                    </NavLink>
+                  )}
+                </div>
               ))}
               
               {/* User Profile & Logout */}
