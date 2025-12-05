@@ -135,14 +135,14 @@ const Departments = () => {
   const uniqueLocations = [...new Set(departments.map(dept => dept.location_c).filter(Boolean))];
 
   // Define columns for the data table
-  const columns = [
+const columns = [
     {
       key: 'Name',
       label: 'Department Name',
       sortable: true,
       render: (department) => (
         <div className="font-medium text-gray-900">
-          {department.Name || 'N/A'}
+          {department?.Name || department?.name || 'N/A'}
         </div>
       )
     },
@@ -152,7 +152,7 @@ const Departments = () => {
       sortable: true,
       render: (department) => (
         <div className="text-sm text-gray-600 font-mono">
-          {department.department_code_c || 'N/A'}
+          {department?.department_code_c || 'N/A'}
         </div>
       )
     },
@@ -162,7 +162,7 @@ const Departments = () => {
       sortable: true,
       render: (department) => (
         <div className="text-sm text-gray-600">
-          {department.location_c || 'N/A'}
+          {department?.location_c || 'N/A'}
         </div>
       )
     },
@@ -172,7 +172,7 @@ const Departments = () => {
       sortable: true,
       render: (department) => (
         <div className="text-sm text-gray-600">
-          {department.email_c || 'N/A'}
+          {department?.email_c || 'N/A'}
         </div>
       )
     },
@@ -182,7 +182,7 @@ const Departments = () => {
       sortable: true,
       render: (department) => (
         <div className="text-sm text-gray-600">
-          {department.phone_number_c || 'N/A'}
+          {department?.phone_number_c || 'N/A'}
         </div>
       )
     },
@@ -192,7 +192,7 @@ const Departments = () => {
       sortable: true,
       render: (department) => (
         <div className="text-sm text-gray-600">
-          {department.manager_id_c || 'N/A'}
+          {department?.manager_id_c || 'N/A'}
         </div>
       )
     },
@@ -202,7 +202,7 @@ const Departments = () => {
       sortable: true,
       render: (department) => (
         <div className="text-sm text-gray-500">
-          {department.CreatedOn ? format(new Date(department.CreatedOn), 'MMM dd, yyyy') : 'N/A'}
+          {department?.CreatedOn ? format(new Date(department.CreatedOn), 'MMM dd, yyyy') : 'N/A'}
         </div>
       )
     },
