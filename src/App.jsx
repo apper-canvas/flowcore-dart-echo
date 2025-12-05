@@ -6,6 +6,9 @@ import { store } from "@/store/store";
 import { router } from "./router";
 
 function App() {
+  // Add console log to verify App is loading
+  console.log("FlowCore ERP App is loading...");
+  
   return (
     <Provider store={store}>
       <RouterProvider router={router} />

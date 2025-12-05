@@ -7,9 +7,14 @@ import Header from "@/components/organisms/Header";
 const Layout = () => {
   const { isAuthenticated } = useSelector(state => state.user);
 
+  console.log("Layout component - isAuthenticated:", isAuthenticated);
+
   if (!isAuthenticated) {
+    console.log("User not authenticated, redirecting to login");
     return <Navigate to="/login" replace />;
   }
+
+  console.log("User authenticated, rendering layout");
 
   return (
     <div className="min-h-screen bg-background">

@@ -31,7 +31,8 @@ const Dashboard = () => {
     loadDashboardData();
   }, []);
 
-  const loadDashboardData = async () => {
+const loadDashboardData = async () => {
+    console.log("Loading dashboard data...");
     setLoading(true);
     setError("");
     
@@ -43,10 +44,12 @@ const Dashboard = () => {
         transactionService.getSummary()
       ]);
 
+      console.log("Dashboard data loaded:", { orders: orders.length, products: products.length, customers: customers.length });
+
       // Calculate metrics
-      const totalRevenue = transactions.totalIncome;
+      const totalRevenue = transactions.totalIncome || 0;
       const totalOrders = orders.length;
-      const lowStockItems = products.filter(p => p.stockLevel <= p.reorderPoint).length;
+      const lowStockItems = products.filter(p => (p.stock_level_c || 0) <= (p.reorder_point_c || 0)).length;
       const totalCustomers = customers.length;
 
       setDashboardData({
@@ -58,17 +61,19 @@ const Dashboard = () => {
 
       // Get recent orders (last 5)
       const recent = orders
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .sort((a, b) => new Date(b.CreatedOn || b.createdAt) - new Date(a.CreatedOn || a.createdAt))
         .slice(0, 5);
       setRecentOrders(recent);
 
       // Get low stock products
-const lowStock = products.filter(p => (p.stock_level_c || 0) <= (p.reorder_point_c || 0));
+      const lowStock = products.filter(p => (p.stock_level_c || 0) <= (p.reorder_point_c || 0));
       setLowStockProducts(lowStock);
 
+      console.log("Dashboard state updated successfully");
+
     } catch (err) {
-      setError("Failed to load dashboard data");
       console.error("Dashboard error:", err);
+      setError("Failed to load dashboard data");
     } finally {
       setLoading(false);
     }
