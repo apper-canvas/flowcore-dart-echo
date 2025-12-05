@@ -10,7 +10,8 @@ class DepartmentService {
     try {
       const apperClient = getApperClient();
       const params = {
-        fields: [
+fields: [
+          {"field": {"Name": "Id"}},
           {"field": {"Name": "Name"}},
           {"field": {"Name": "Tags"}}, 
           {"field": {"Name": "description_c"}},
@@ -45,7 +46,8 @@ class DepartmentService {
     try {
       const apperClient = getApperClient();
       const params = {
-        fields: [
+fields: [
+          {"field": {"Name": "Id"}},
           {"field": {"Name": "Name"}},
           {"field": {"Name": "Tags"}}, 
           {"field": {"Name": "description_c"}},
