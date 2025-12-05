@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import DataTable from "@/components/organisms/DataTable";
 import Button from "@/components/atoms/Button";
 import SearchBar from "@/components/molecules/SearchBar";
+import Select from "@/components/atoms/Select";
 import Loading from "@/components/ui/Loading";
 import ErrorView from "@/components/ui/ErrorView";
 import Empty from "@/components/ui/Empty";
@@ -12,23 +13,25 @@ import employeeService from "@/services/api/employeeService";
 import { format } from "date-fns";
 
 const Employees = () => {
-  const [employees, setEmployees] = useState([]);
+const [employees, setEmployees] = useState([]);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [departmentFilter, setDepartmentFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [employmentTypeFilter, setEmploymentTypeFilter] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-
   useEffect(() => {
     loadEmployees();
   }, []);
 
-  useEffect(() => {
+useEffect(() => {
     filterEmployees();
-  }, [employees, searchTerm]);
+  }, [employees, searchTerm, departmentFilter, statusFilter, employmentTypeFilter]);
 
   const loadEmployees = async () => {
     setLoading(true);
@@ -45,22 +48,41 @@ const Employees = () => {
     }
   };
 
-  const filterEmployees = () => {
-    if (!searchTerm.trim()) {
-      setFilteredEmployees(employees);
-      return;
-    }
+const filterEmployees = () => {
+    let filtered = [...employees];
 
-    const filtered = employees.filter(employee => {
+    // Apply search filter
+    if (searchTerm.trim()) {
       const searchLower = searchTerm.toLowerCase();
-      return (
+      filtered = filtered.filter(employee =>
         employee.Name?.toLowerCase().includes(searchLower) ||
         employee.employee_code_c?.toLowerCase().includes(searchLower) ||
         employee.first_name_c?.toLowerCase().includes(searchLower) ||
         employee.last_name_c?.toLowerCase().includes(searchLower) ||
         employee.email_c?.toLowerCase().includes(searchLower)
       );
-    });
+    }
+
+    // Apply department filter
+    if (departmentFilter && departmentFilter !== "") {
+      filtered = filtered.filter(employee => 
+        employee.department_c?.toLowerCase() === departmentFilter.toLowerCase()
+      );
+    }
+
+    // Apply status filter
+    if (statusFilter && statusFilter !== "") {
+      filtered = filtered.filter(employee => 
+        employee.status_c?.toLowerCase() === statusFilter.toLowerCase()
+      );
+    }
+
+    // Apply employment type filter
+    if (employmentTypeFilter && employmentTypeFilter !== "") {
+      filtered = filtered.filter(employee => 
+        employee.employment_type_c?.toLowerCase() === employmentTypeFilter.toLowerCase()
+      );
+    }
     
     setFilteredEmployees(filtered);
     setCurrentPage(1);
@@ -105,8 +127,27 @@ const Employees = () => {
     }
   };
 
-  const handleSearchChange = (e) => {
+const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+  };
+
+  const handleDepartmentFilterChange = (e) => {
+    setDepartmentFilter(e.target.value);
+  };
+
+  const handleStatusFilterChange = (e) => {
+    setStatusFilter(e.target.value);
+  };
+
+  const handleEmploymentTypeFilterChange = (e) => {
+    setEmploymentTypeFilter(e.target.value);
+  };
+
+  const clearAllFilters = () => {
+    setSearchTerm("");
+    setDepartmentFilter("");
+    setStatusFilter("");
+    setEmploymentTypeFilter("");
   };
 
   const handlePageChange = (page) => {
@@ -219,15 +260,64 @@ const Employees = () => {
         </div>
       </div>
 
-      {/* Search and Filters */}
+{/* Search and Filters */}
       <div className="mb-6">
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col lg:flex-row gap-4">
           <div className="flex-1">
             <SearchBar
               value={searchTerm}
               onChange={handleSearchChange}
               placeholder="Search employees..."
             />
+          </div>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="min-w-[150px]">
+              <Select
+                value={departmentFilter}
+                onChange={handleDepartmentFilterChange}
+                className="w-full"
+              >
+                <option value="">All Departments</option>
+                <option value="IT">IT</option>
+                <option value="HR">HR</option>
+                <option value="Finance">Finance</option>
+                <option value="Sales">Sales</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Operations">Operations</option>
+              </Select>
+            </div>
+            <div className="min-w-[120px]">
+              <Select
+                value={statusFilter}
+                onChange={handleStatusFilterChange}
+                className="w-full"
+              >
+                <option value="">All Status</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="On Leave">On Leave</option>
+              </Select>
+            </div>
+            <div className="min-w-[140px]">
+              <Select
+                value={employmentTypeFilter}
+                onChange={handleEmploymentTypeFilterChange}
+                className="w-full"
+              >
+                <option value="">All Types</option>
+                <option value="Full-time">Full-time</option>
+                <option value="Part-time">Part-time</option>
+                <option value="Contract">Contract</option>
+                <option value="Intern">Intern</option>
+              </Select>
+            </div>
+            <Button
+              variant="secondary"
+              onClick={clearAllFilters}
+              className="px-3 py-2 whitespace-nowrap"
+            >
+              Clear Filters
+            </Button>
           </div>
         </div>
       </div>
