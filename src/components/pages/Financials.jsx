@@ -57,13 +57,15 @@ const loadTransactions = async () => {
     } catch (err) {
       setError("Failed to load financial data");
       console.error("Financials error:", err);
-      // Set empty arrays on error to prevent undefined issues
+// Set empty arrays on error to prevent undefined issues
       setTransactions([]);
       setSummary({});
     } finally {
       setLoading(false);
-};
-const filterTransactions = () => {
+    }
+  };
+
+  const filterTransactions = () => {
     const previousFiltered = filteredTransactions;
     let filtered = [...transactions];
 
