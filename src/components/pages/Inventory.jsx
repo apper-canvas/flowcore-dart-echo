@@ -50,11 +50,12 @@ const Inventory = () => {
     let filtered = [...products];
 
     // Search filter
-    if (searchQuery) {
-filtered = filtered.filter(product =>
+if (searchQuery) {
+      filtered = filtered.filter(product =>
         (product.Name || product.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
         (product.sku_c || product.sku || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (product.category_c || product.category || '').toLowerCase().includes(searchQuery.toLowerCase())
+        (product.category_c || product.category || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (product.Tags || '').toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
@@ -126,6 +127,12 @@ const getStockStatus = (product) => {
 const columns = [
     { key: "sku_c", label: "SKU", sortable: true },
     { key: "Name", label: "Product Name", sortable: true },
+    { 
+      key: "Tags", 
+      label: "Tags", 
+      sortable: true,
+      render: (value) => value ? value.split(',').map(tag => tag.trim()).join(', ') : ''
+    },
     { key: "category_c", label: "Category", sortable: true },
     { 
       key: "price_c", 
@@ -140,6 +147,24 @@ const columns = [
       render: (value, product) => (
         <StatusBadge status={getStockStatus(product)} type="stock" />
       )
+    },
+    { 
+      key: "CreatedBy", 
+      label: "Created By", 
+      sortable: true,
+      render: (value) => value?.Name || 'N/A'
+    },
+    { 
+      key: "ModifiedOn", 
+      label: "Modified On", 
+      sortable: true,
+      render: (value) => value ? new Date(value).toLocaleDateString() : 'N/A'
+    },
+    { 
+      key: "ModifiedBy", 
+      label: "Modified By", 
+      sortable: true,
+      render: (value) => value?.Name || 'N/A'
     },
     {
       key: "actions",

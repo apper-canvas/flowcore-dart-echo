@@ -6,10 +6,11 @@ class ProductService {
       const apperClient = getApperClient();
       if (!apperClient) throw new Error("ApperClient not initialized");
 
-      const response = await apperClient.fetchRecords('product_c', {
+const response = await apperClient.fetchRecords('product_c', {
         fields: [
           {"field": {"Name": "Id"}},
           {"field": {"Name": "Name"}},
+          {"field": {"Name": "Tags"}},
           {"field": {"Name": "sku_c"}},
           {"field": {"Name": "description_c"}},
           {"field": {"Name": "category_c"}},
@@ -18,7 +19,10 @@ class ProductService {
           {"field": {"Name": "stock_level_c"}},
           {"field": {"Name": "reorder_point_c"}},
           {"field": {"Name": "unit_c"}},
-          {"field": {"Name": "CreatedOn"}}
+          {"field": {"Name": "CreatedOn"}},
+          {"field": {"Name": "CreatedBy"}},
+          {"field": {"Name": "ModifiedOn"}},
+          {"field": {"Name": "ModifiedBy"}}
         ],
         orderBy: [{"fieldName": "Name", "sorttype": "ASC"}]
       });
@@ -41,9 +45,10 @@ class ProductService {
       if (!apperClient) throw new Error("ApperClient not initialized");
 
       const response = await apperClient.getRecordById('product_c', parseInt(id), {
-        fields: [
+fields: [
           {"field": {"Name": "Id"}},
           {"field": {"Name": "Name"}},
+          {"field": {"Name": "Tags"}},
           {"field": {"Name": "sku_c"}},
           {"field": {"Name": "description_c"}},
           {"field": {"Name": "category_c"}},
@@ -52,7 +57,10 @@ class ProductService {
           {"field": {"Name": "stock_level_c"}},
           {"field": {"Name": "reorder_point_c"}},
           {"field": {"Name": "unit_c"}},
-          {"field": {"Name": "CreatedOn"}}
+          {"field": {"Name": "CreatedOn"}},
+          {"field": {"Name": "CreatedBy"}},
+          {"field": {"Name": "ModifiedOn"}},
+          {"field": {"Name": "ModifiedBy"}}
         ]
       });
 
@@ -72,9 +80,10 @@ class ProductService {
       const apperClient = getApperClient();
       if (!apperClient) throw new Error("ApperClient not initialized");
 
-      const params = {
+const params = {
         records: [{
           Name: productData.name || productData.Name || '',
+          Tags: productData.tags || productData.Tags || '',
           sku_c: productData.sku || productData.sku_c || '',
           description_c: productData.description || productData.description_c || '',
           category_c: productData.category || productData.category_c || '',
@@ -116,10 +125,11 @@ class ProductService {
       const apperClient = getApperClient();
       if (!apperClient) throw new Error("ApperClient not initialized");
 
-      const params = {
+const params = {
         records: [{
           Id: parseInt(id),
           Name: productData.name || productData.Name || '',
+          Tags: productData.tags || productData.Tags || '',
           sku_c: productData.sku || productData.sku_c || '',
           description_c: productData.description || productData.description_c || '',
           category_c: productData.category || productData.category_c || '',
