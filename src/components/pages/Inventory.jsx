@@ -27,28 +27,57 @@ const [selectedProduct, setSelectedProduct] = useState(null);
   const [itemsPerPage, setItemsPerPage] = useState(20);
   const [totalItems, setTotalItems] = useState(0);
 
-  useEffect(() => {
+useEffect(() => {
     loadProducts();
-  }, [currentPage, itemsPerPage]);
-
-  useEffect(() => {
-filterProducts();
-  }, [products, searchQuery, categoryFilter, statusFilter]);
+  }, [currentPage, itemsPerPage, searchQuery, categoryFilter, statusFilter]);
 
 const loadProducts = async () => {
-    setLoading(true);
-    setError("");
-    
     try {
+      setLoading(true);
+      setError("");
       const offset = (currentPage - 1) * itemsPerPage;
-      const result = await productService.getAllPaginated(itemsPerPage, offset);
+      const response = await productService.getAllPaginated(itemsPerPage, offset);
       
-      if (result && result.data) {
-        setProducts(result.data || []);
-        setTotalItems(result.total || 0);
+      if (response && response.data) {
+        setProducts(response.data);
+        setTotalItems(response.total || 0);
+        
+        // Apply client-side filtering if needed
+        let filtered = response.data;
+        
+        if (searchQuery) {
+          filtered = filtered.filter(product => 
+            (product.Name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (product.sku_c || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (product.description_c || '').toLowerCase().includes(searchQuery.toLowerCase())
+          );
+        }
+
+        if (categoryFilter) {
+          filtered = filtered.filter(product => product.category_c === categoryFilter);
+        }
+
+        if (statusFilter) {
+          filtered = filtered.filter(product => {
+            const stockLevel = product.stock_level_c || 0;
+            const reorderPoint = product.reorder_point_c || 0;
+            
+            if (statusFilter === 'in-stock') {
+              return stockLevel > reorderPoint;
+            } else if (statusFilter === 'low-stock') {
+              return stockLevel > 0 && stockLevel <= reorderPoint;
+            } else if (statusFilter === 'out-of-stock') {
+              return stockLevel === 0;
+            }
+            return true;
+          });
+        }
+
+        setFilteredProducts(filtered);
       } else {
         setProducts([]);
         setTotalItems(0);
+        setFilteredProducts([]);
       }
     } catch (error) {
       console.error("Error loading products:", error);
@@ -56,48 +85,13 @@ const loadProducts = async () => {
       toast.error("Failed to load products");
       setProducts([]);
       setTotalItems(0);
+      setFilteredProducts([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
 
-  const handleItemsPerPageChange = (newItemsPerPage) => {
-setItemsPerPage(newItemsPerPage);
-    setCurrentPage(1); // Reset to first page when changing items per page
-  };
-
-  const filterProducts = () => {
-    let filtered = [...products];
-
-    // Search filter
-if (searchQuery) {
-      filtered = filtered.filter(product =>
-        (product.Name || product.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (product.sku_c || product.sku || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (product.category_c || product.category || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (product.Tags || '').toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    // Category filter
-if (categoryFilter) {
-      filtered = filtered.filter(product => (product.category_c || product.category) === categoryFilter);
-    }
-
-    // Status filter
-    if (statusFilter) {
-      filtered = filtered.filter(product => {
-        const status = getStockStatus(product);
-        return status === statusFilter;
-      });
-    }
-
-setFilteredProducts(filtered);
-  };
 
 const getStockStatus = (product) => {
     const stockLevel = product.stock_level_c || product.stockLevel || 0;
@@ -245,7 +239,16 @@ const columns = [
 
 const categories = [...new Set(products.map(p => p.category_c || p.category).filter(Boolean))];
 
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
+const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1); // Reset to first page when changing items per page
+  };
 
   const paginationConfig = {
     component: Pagination,
