@@ -1,4 +1,5 @@
 import { getApperClient } from "@/services/apperClient";
+import salesOrderLineService from "./salesOrderLineService";
 
 class SalesOrderService {
   async getAll() {
@@ -283,6 +284,84 @@ class SalesOrderService {
     } catch (error) {
       console.error("Error fetching recent sales orders:", error);
       return [];
+    }
+}
+
+  // Handle creating sales order with line items
+  async createWithLines(salesOrderData, lineItems = []) {
+    try {
+      // Create the sales order first
+      const salesOrder = await this.create(salesOrderData);
+      
+      // If line items provided, create them
+      if (lineItems.length > 0) {
+        const linesData = lineItems.map(item => ({
+          sales_order_id: salesOrder.Id,
+          item_id: item.item_id || item.productId,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          tax_code_id: item.tax_code_id || 1,
+          line_total: item.line_total,
+          Name: `Line for ${salesOrder.Name || salesOrder.sales_order_number_c}`
+        }));
+        
+        await salesOrderLineService.createMultiple(linesData);
+      }
+      
+      return salesOrder;
+    } catch (error) {
+      console.error("Error creating sales order with lines:", error);
+      throw error;
+    }
+  }
+
+  // Handle updating sales order with line items
+  async updateWithLines(id, salesOrderData, lineItems = []) {
+    try {
+      // Update the sales order first
+      const salesOrder = await this.update(id, salesOrderData);
+      
+      // Delete existing line items for this sales order
+      await salesOrderLineService.deleteBySalesOrderId(id);
+      
+      // Create new line items
+      if (lineItems.length > 0) {
+        const linesData = lineItems.map(item => ({
+          sales_order_id: parseInt(id),
+          item_id: item.item_id || item.productId,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          tax_code_id: item.tax_code_id || 1,
+          line_total: item.line_total,
+          Name: `Line for ${salesOrder.Name || salesOrder.sales_order_number_c}`
+        }));
+        
+        await salesOrderLineService.createMultiple(linesData);
+      }
+      
+      return salesOrder;
+    } catch (error) {
+      console.error("Error updating sales order with lines:", error);
+      throw error;
+    }
+  }
+
+  // Get sales order with its line items
+  async getWithLines(id) {
+    try {
+      const [salesOrder, lineItems] = await Promise.all([
+        this.getById(id),
+        salesOrderLineService.getBySalesOrderId(id)
+      ]);
+      
+      if (salesOrder) {
+        salesOrder.lineItems = lineItems;
+      }
+      
+      return salesOrder;
+    } catch (error) {
+      console.error("Error fetching sales order with lines:", error);
+      throw error;
     }
   }
 

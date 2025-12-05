@@ -114,7 +114,7 @@ export const router = createBrowserRouter([
 path: "orders",
             element: <Orders />
           }),
-createRoute({
+          createRoute({
             path: "sales-orders",
             element: <SalesOrders />
           }),

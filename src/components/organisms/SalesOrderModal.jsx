@@ -7,12 +7,20 @@ import FormField from "@/components/molecules/FormField";
 
 const SalesOrderModal = ({ isOpen, onClose, salesOrder, onSave }) => {
   const [formData, setFormData] = useState({
-    customerId: "",
+customerId: "",
     orderDate: "",
     deliveryDate: "",
     status: "Open",
     totalAmount: "",
     description: ""
+  });
+  
+  const [lineItems, setLineItems] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [newItem, setNewItem] = useState({
+    productId: "",
+    quantity: 1,
+    taxCodeId: 1
   });
   
   const [customers, setCustomers] = useState([]);
@@ -26,7 +34,7 @@ const SalesOrderModal = ({ isOpen, onClose, salesOrder, onSave }) => {
   }, [isOpen]);
 
   useEffect(() => {
-    if (salesOrder) {
+if (salesOrder) {
       setFormData({
         customerId: salesOrder.customer_c?.Id || salesOrder.customer_c || "",
         orderDate: salesOrder.order_date_c || "",
@@ -35,6 +43,7 @@ const SalesOrderModal = ({ isOpen, onClose, salesOrder, onSave }) => {
         totalAmount: salesOrder.total_amount_c || "",
         description: salesOrder.description_c || ""
       });
+      setLineItems(salesOrder.lineItems || []);
     } else {
       setFormData({
         customerId: "",
@@ -44,6 +53,7 @@ const SalesOrderModal = ({ isOpen, onClose, salesOrder, onSave }) => {
         totalAmount: "",
         description: ""
       });
+      setLineItems([]);
     }
   }, [salesOrder]);
 
@@ -62,7 +72,7 @@ const SalesOrderModal = ({ isOpen, onClose, salesOrder, onSave }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.customerId) {
+if (!formData.customerId) {
       toast.error("Please select a customer");
       return;
     }
@@ -72,24 +82,34 @@ const SalesOrderModal = ({ isOpen, onClose, salesOrder, onSave }) => {
       return;
     }
 
-    if (!formData.totalAmount || parseFloat(formData.totalAmount) < 0) {
-      toast.error("Please enter a valid total amount");
+    if (lineItems.length === 0) {
+      toast.error("Please add at least one line item");
       return;
     }
 
-    setLoading(true);
+setLoading(true);
 
     try {
+      const { subtotal, tax, total } = calculateTotals();
+      
       const salesOrderData = {
         customer_c: parseInt(formData.customerId),
         order_date_c: formData.orderDate,
         delivery_date_c: formData.deliveryDate,
         status_c: formData.status,
-        total_amount_c: parseFloat(formData.totalAmount),
+        total_amount_c: total,
         description_c: formData.description
       };
 
-      await onSave(salesOrderData);
+      const lineItemsData = lineItems.map(item => ({
+        item_id: item.productId || item.item_id,
+        quantity: item.quantity,
+        unit_price: item.unit_price,
+        tax_code_id: item.tax_code_id || 1,
+        line_total: item.line_total
+      }));
+
+      await onSave(salesOrderData, lineItemsData);
       toast.success(salesOrder ? "Sales order updated successfully" : "Sales order created successfully");
       onClose();
     } catch (error) {
@@ -120,9 +140,71 @@ const SalesOrderModal = ({ isOpen, onClose, salesOrder, onSave }) => {
     { value: "Cancelled", label: "Cancelled" }
   ];
 
+const handleAddItem = () => {
+    if (!newItem.productId || newItem.quantity <= 0) {
+      toast.error("Please select a product and enter a valid quantity");
+      return;
+    }
+
+    const product = products.find(p => p.Id === parseInt(newItem.productId));
+    if (!product) {
+      toast.error("Product not found");
+      return;
+    }
+
+    const existingItemIndex = lineItems.findIndex(item => item.productId === newItem.productId);
+    
+    if (existingItemIndex >= 0) {
+      const updatedItems = [...lineItems];
+      updatedItems[existingItemIndex].quantity += parseInt(newItem.quantity);
+      updatedItems[existingItemIndex].line_total = updatedItems[existingItemIndex].quantity * updatedItems[existingItemIndex].unit_price;
+      setLineItems(updatedItems);
+    } else {
+      const unitPrice = product.price_c || product.price || 0;
+      const quantity = parseInt(newItem.quantity);
+      const lineTotal = quantity * unitPrice;
+      
+      const item = {
+        productId: newItem.productId,
+        product_name: product.Name || product.name,
+        quantity: quantity,
+        unit_price: unitPrice,
+        tax_code_id: newItem.taxCodeId,
+        line_total: lineTotal
+      };
+      setLineItems([...lineItems, item]);
+    }
+
+    setNewItem({ productId: "", quantity: 1, taxCodeId: 1 });
+  };
+
+  const handleRemoveItem = (index) => {
+    setLineItems(lineItems.filter((_, i) => i !== index));
+  };
+
+  const calculateTotals = () => {
+    const subtotal = lineItems.reduce((sum, item) => sum + (item.line_total || 0), 0);
+    const tax = subtotal * 0.08; // 8% tax
+    const total = subtotal + tax;
+    
+    return { subtotal, tax, total };
+  };
+
+  const handleNewItemChange = (e) => {
+    const { name, value } = e.target;
+    setNewItem(prev => ({ ...prev, [name]: value }));
+  };
+
+  const productOptions = products.map(product => ({
+    value: product.Id.toString(),
+    label: `${product.Name || product.name} - $${(product.price_c || product.price || 0).toFixed(2)}`
+  }));
+
+  const { subtotal, tax, total } = calculateTotals();
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[95vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[95vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b">
           <h2 className="text-xl font-semibold text-gray-900">
             {salesOrder ? "Edit Sales Order" : "Create New Sales Order"}
@@ -134,8 +216,7 @@ const SalesOrderModal = ({ isOpen, onClose, salesOrder, onSave }) => {
             <ApperIcon name="X" className="w-5 h-5 text-gray-500" />
           </button>
         </div>
-
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+<form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Customer and Status */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
@@ -197,10 +278,107 @@ const SalesOrderModal = ({ isOpen, onClose, salesOrder, onSave }) => {
             label="Description"
             name="description"
             value={formData.description}
-            onChange={handleChange}
+onChange={handleChange}
             placeholder="Enter sales order description or notes"
           />
 
+          {/* Line Items Section */}
+          <div className="border-t pt-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Line Items</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
+              <FormField
+                label="Product"
+                type="select"
+                name="productId"
+                value={newItem.productId}
+                onChange={handleNewItemChange}
+                options={productOptions}
+              />
+              
+              <FormField
+                label="Quantity"
+                type="number"
+                name="quantity"
+                value={newItem.quantity}
+                onChange={handleNewItemChange}
+                min="1"
+              />
+              
+              <div className="flex items-end">
+                <Button
+                  type="button"
+                  onClick={handleAddItem}
+                  className="w-full"
+                >
+                  <ApperIcon name="Plus" className="w-4 h-4 mr-2" />
+                  Add Item
+                </Button>
+              </div>
+            </div>
+
+            {/* Items Table */}
+            {lineItems.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Line Total</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {lineItems.map((item, index) => (
+                      <tr key={index}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.product_name}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.quantity}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(item.unit_price || 0).toFixed(2)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(item.line_total || 0).toFixed(2)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <Button
+                            variant="error"
+                            size="sm"
+                            onClick={() => handleRemoveItem(index)}
+                          >
+                            <ApperIcon name="Trash2" className="w-4 h-4" />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                No line items added yet. Add items to the sales order above.
+              </div>
+            )}
+          </div>
+
+          {/* Order Totals */}
+          {lineItems.length > 0 && (
+            <div className="border-t pt-6">
+              <div className="bg-gray-50 rounded-lg p-4 max-w-sm ml-auto">
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span>Subtotal:</span>
+                    <span>${subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Tax (8%):</span>
+                    <span>${tax.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between font-semibold text-lg border-t pt-2">
+                    <span>Total:</span>
+                    <span>${total.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           <div className="flex justify-end gap-3 pt-6 border-t">
             <Button
               type="button"

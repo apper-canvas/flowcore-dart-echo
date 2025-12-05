@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import DataTable from "@/components/organisms/DataTable";
-import SalesOrderModal from "@/components/organisms/SalesOrderModal";
-import SearchBar from "@/components/molecules/SearchBar";
-import StatusBadge from "@/components/molecules/StatusBadge";
-import Button from "@/components/atoms/Button";
-import Select from "@/components/atoms/Select";
+import { format } from "date-fns";
+import customerService from "@/services/api/customerService";
+import salesOrderService from "@/services/api/salesOrderService";
+import productService from "@/services/api/productService";
+import ApperIcon from "@/components/ApperIcon";
 import Loading from "@/components/ui/Loading";
 import ErrorView from "@/components/ui/ErrorView";
 import Empty from "@/components/ui/Empty";
-import ApperIcon from "@/components/ApperIcon";
-import salesOrderService from "@/services/api/salesOrderService";
-import customerService from "@/services/api/customerService";
-import { format } from "date-fns";
+import Select from "@/components/atoms/Select";
+import Button from "@/components/atoms/Button";
+import DataTable from "@/components/organisms/DataTable";
+import SalesOrderModal from "@/components/organisms/SalesOrderModal";
+import Orders from "@/components/pages/Orders";
+import SearchBar from "@/components/molecules/SearchBar";
+import StatusBadge from "@/components/molecules/StatusBadge";
 
 const SalesOrders = () => {
   const [salesOrders, setSalesOrders] = useState([]);
@@ -20,10 +22,11 @@ const SalesOrders = () => {
   const [filteredSalesOrders, setFilteredSalesOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [selectedSalesOrder, setSelectedSalesOrder] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     loadData();
@@ -37,13 +40,15 @@ const SalesOrders = () => {
     setLoading(true);
     setError("");
     
-    try {
-      const [salesOrdersData, customersData] = await Promise.all([
+try {
+      const [salesOrdersData, customersData, productsData] = await Promise.all([
         salesOrderService.getAll(),
-        customerService.getAll()
+        customerService.getAll(),
+        productService.getAll()
       ]);
       setSalesOrders(salesOrdersData);
       setCustomers(customersData);
+      setProducts(productsData);
     } catch (err) {
       setError("Failed to load sales orders");
       console.error("Sales orders error:", err);
@@ -74,20 +79,22 @@ const SalesOrders = () => {
     setFilteredSalesOrders(filtered);
   };
 
-  const handleSaveSalesOrder = async (salesOrderData) => {
+const handleSaveSalesOrder = async (salesOrderData, lineItems = []) => {
     try {
       if (selectedSalesOrder) {
-        await salesOrderService.update(selectedSalesOrder.Id, salesOrderData);
+        await salesOrderService.updateWithLines(selectedSalesOrder.Id, salesOrderData, lineItems);
+        const updatedSalesOrder = await salesOrderService.getWithLines(selectedSalesOrder.Id);
         const updatedSalesOrders = salesOrders.map(so =>
-          so.Id === selectedSalesOrder.Id ? { ...so, ...salesOrderData } : so
+          so.Id === selectedSalesOrder.Id ? updatedSalesOrder : so
         );
         setSalesOrders(updatedSalesOrders);
       } else {
-        const newSalesOrder = await salesOrderService.create(salesOrderData);
+        const newSalesOrder = await salesOrderService.createWithLines(salesOrderData, lineItems);
         setSalesOrders([...salesOrders, newSalesOrder]);
       }
       setIsModalOpen(false);
       setSelectedSalesOrder(null);
+      toast.success(selectedSalesOrder ? "Sales order updated successfully" : "Sales order created successfully");
     } catch (error) {
       throw error;
     }
@@ -103,11 +110,16 @@ const SalesOrders = () => {
         toast.error("Failed to delete sales order");
       }
     }
-  };
+};
 
-  const handleEditSalesOrder = (salesOrder) => {
-    setSelectedSalesOrder(salesOrder);
-    setIsModalOpen(true);
+  const handleEditSalesOrder = async (salesOrder) => {
+    try {
+      const salesOrderWithLines = await salesOrderService.getWithLines(salesOrder.Id);
+      setSelectedSalesOrder(salesOrderWithLines);
+      setIsModalOpen(true);
+    } catch (error) {
+      toast.error("Failed to load sales order details");
+    }
   };
 
   const handleAddSalesOrder = () => {
@@ -294,7 +306,7 @@ const SalesOrders = () => {
         />
       )}
 
-      {/* Sales Order Modal */}
+{/* Sales Order Modal */}
       <SalesOrderModal
         isOpen={isModalOpen}
         onClose={() => {
@@ -303,6 +315,8 @@ const SalesOrders = () => {
         }}
         salesOrder={selectedSalesOrder}
         onSave={handleSaveSalesOrder}
+        products={products}
+        customers={customers}
       />
     </div>
   );

@@ -1,4 +1,3 @@
-[
 {
   "/": {
     "allow": {
@@ -26,7 +25,7 @@
       "redirectOnDeny": "/login"
     }
   },
-"/orders": {
+  "/orders": {
     "allow": {
       "when": {
         "conditions": [
@@ -64,35 +63,47 @@
       },
       "redirectOnDeny": "/login"
     }
-  }},
-  {
-    "path": "/employees",
-    "isPublic": false,
-    "redirect": null,
-    "element": "employees",
-    "meta": {
-      "title": "Employees"
+  },
+  "/employees": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "User must be authenticated to manage employees",
+            "rule": "authenticated"
+          }
+        ]
+      },
+      "redirectOnDeny": "/login"
     }
   },
-  {
-    "path": "/attendance",
-    "isPublic": false,
-    "redirect": null,
-    "element": "attendance",
-    "meta": {
-      "title": "Attendance"
+  "/attendance": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "User must be authenticated to manage attendance",
+            "rule": "authenticated"
+          }
+        ]
+      },
+      "redirectOnDeny": "/login"
     }
   },
-  {
-    "path": "/payroll",
-    "isPublic": false,
-    "redirect": null,
-    "element": "payroll",
-    "meta": {
-      "title": "Payroll"
+  "/payroll": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "User must be authenticated to manage payroll",
+            "rule": "authenticated"
+          }
+        ]
+      },
+      "redirectOnDeny": "/login"
     }
   },
-  "/financials",":", {
+  "/financials": {
     "allow": {
       "when": {
         "conditions": [
@@ -105,7 +116,7 @@
       "redirectOnDeny": "/login"
     }
   },
-  "/login",":", {
+  "/login": {
     "allow": {
       "when": {
         "conditions": [
@@ -117,7 +128,7 @@
       }
     }
   },
-  "/signup",":", {
+  "/signup": {
     "allow": {
       "when": {
         "conditions": [
@@ -129,7 +140,7 @@
       }
     }
   },
-  "/callback",":", {
+  "/callback": {
     "allow": {
       "when": {
         "conditions": [
@@ -141,7 +152,7 @@
       }
     }
   },
-  "/error",":", {
+  "/error": {
     "allow": {
       "when": {
         "conditions": [
@@ -153,7 +164,7 @@
       }
     }
   },
-  "/prompt-password/*",":", {
+  "/prompt-password/*": {
     "allow": {
       "when": {
         "conditions": [
@@ -165,7 +176,7 @@
       }
     }
   },
-  "/reset-password/*",":", {
+  "/reset-password/*": {
     "allow": {
       "when": {
         "conditions": [
@@ -177,5 +188,4 @@
       }
     }
   }
-
-]
+}
