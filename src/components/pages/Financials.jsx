@@ -346,6 +346,11 @@ const loadTransactions = async () => {
             onPageChange: setCurrentPage,
             onItemsPerPageChange: setItemsPerPage
           }}
+          debug={{
+            totalRecords: transactions.length,
+            filteredRecords: filteredTransactions.length,
+            currentPageRecords: Math.min(itemsPerPage, filteredTransactions.length - ((currentPage - 1) * itemsPerPage))
+          }}
         />
       )}
 

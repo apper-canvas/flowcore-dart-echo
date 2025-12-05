@@ -41,13 +41,16 @@ setFormData({
 
     try {
 const transactionData = {
+        Name: formData.name || formData.description || "Transaction",
         type_c: formData.type,
         category_c: formData.category,
         description_c: formData.description,
         amount_c: parseFloat(formData.amount) || 0,
-        notes_c: formData.notes
+        notes_c: formData.notes,
+        date_c: new Date().toISOString().split('T')[0] // Add current date in YYYY-MM-DD format
       };
-
+      
+      console.log('Submitting transaction data:', transactionData);
       await onSave(transactionData);
       toast.success(transaction ? "Transaction updated successfully" : "Transaction recorded successfully");
       onClose();

@@ -1,15 +1,18 @@
 import { getApperClient } from "@/services/apperClient";
 
 class TransactionService {
-  async getAll() {
+async getAll() {
     try {
       const apperClient = getApperClient();
       if (!apperClient) throw new Error("ApperClient not initialized");
 
+      console.log('Fetching all transactions from database...');
+      
       const response = await apperClient.fetchRecords('transaction_c', {
         fields: [
           {"field": {"Name": "Id"}},
           {"field": {"Name": "Name"}},
+          {"field": {"Name": "Tags"}},
           {"field": {"Name": "amount_c"}},
           {"field": {"Name": "category_c"}},
           {"field": {"Name": "description_c"}},
@@ -17,20 +20,33 @@ class TransactionService {
           {"field": {"Name": "notes_c"}},
           {"field": {"Name": "type_c"}},
           {"field": {"Name": "related_order_id_c"}},
-          {"field": {"Name": "CreatedOn"}}
+          {"field": {"Name": "CreatedOn"}},
+          {"field": {"Name": "CreatedBy"}},
+          {"field": {"Name": "ModifiedOn"}},
+          {"field": {"Name": "ModifiedBy"}}
         ],
         orderBy: [{
           "fieldName": "date_c",
           "sorttype": "DESC"
-        }]
+        }],
+        pagingInfo: {
+          "limit": 1000,
+          "offset": 0
+        }
       });
 
+      console.log('Transaction fetch response:', response);
+
       if (!response.success) {
-        console.error(response.message);
+        console.error('Failed to fetch transactions:', response.message);
         return [];
       }
 
-      return response.data || [];
+      const transactions = response.data || [];
+      console.log(`Successfully fetched ${transactions.length} transactions from database`);
+      console.log('Sample transaction data:', transactions[0]);
+
+      return transactions;
     } catch (error) {
       console.error("Error fetching transactions:", error);
       return [];
