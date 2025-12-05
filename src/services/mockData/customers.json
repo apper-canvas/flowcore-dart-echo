@@ -1,0 +1,102 @@
+[
+  {
+    "Id": 1,
+    "name": "Sarah Johnson",
+    "email": "sarah.johnson@email.com",
+    "phone": "+1 (555) 123-4567",
+    "address": "123 Main St, New York, NY 10001",
+    "totalOrders": 8,
+    "totalSpent": 1247.82,
+    "createdAt": "2024-01-10T09:00:00.000Z"
+  },
+  {
+    "Id": 2,
+    "name": "Michael Chen",
+    "email": "michael.chen@email.com",
+    "phone": "+1 (555) 234-5678",
+    "address": "456 Oak Ave, Los Angeles, CA 90210",
+    "totalOrders": 5,
+    "totalSpent": 892.45,
+    "createdAt": "2024-01-12T14:30:00.000Z"
+  },
+  {
+    "Id": 3,
+    "name": "Emily Rodriguez",
+    "email": "emily.rodriguez@email.com",
+    "phone": "+1 (555) 345-6789",
+    "address": "789 Pine Rd, Chicago, IL 60601",
+    "totalOrders": 3,
+    "totalSpent": 567.32,
+    "createdAt": "2024-01-15T11:15:00.000Z"
+  },
+  {
+    "Id": 4,
+    "name": "David Thompson",
+    "email": "david.thompson@email.com",
+    "phone": "+1 (555) 456-7890",
+    "address": "321 Elm St, Houston, TX 77001",
+    "totalOrders": 12,
+    "totalSpent": 2156.78,
+    "createdAt": "2024-01-08T16:45:00.000Z"
+  },
+  {
+    "Id": 5,
+    "name": "Lisa Anderson",
+    "email": "lisa.anderson@email.com",
+    "phone": "+1 (555) 567-8901",
+    "address": "654 Maple Dr, Phoenix, AZ 85001",
+    "totalOrders": 7,
+    "totalSpent": 1034.56,
+    "createdAt": "2024-01-14T13:20:00.000Z"
+  },
+  {
+    "Id": 6,
+    "name": "Robert Wilson",
+    "email": "robert.wilson@email.com",
+    "phone": "+1 (555) 678-9012",
+    "address": "987 Cedar Ln, Philadelphia, PA 19101",
+    "totalOrders": 4,
+    "totalSpent": 723.91,
+    "createdAt": "2024-01-18T10:30:00.000Z"
+  },
+  {
+    "Id": 7,
+    "name": "Jennifer Martinez",
+    "email": "jennifer.martinez@email.com",
+    "phone": "+1 (555) 789-0123",
+    "address": "147 Birch St, San Antonio, TX 78201",
+    "totalOrders": 2,
+    "totalSpent": 198.45,
+    "createdAt": "2024-01-20T15:10:00.000Z"
+  },
+  {
+    "Id": 8,
+    "name": "Christopher Davis",
+    "email": "christopher.davis@email.com",
+    "phone": "+1 (555) 890-1234",
+    "address": "258 Spruce Ave, San Diego, CA 92101",
+    "totalOrders": 6,
+    "totalSpent": 945.67,
+    "createdAt": "2024-01-16T12:45:00.000Z"
+  },
+  {
+    "Id": 9,
+    "name": "Amanda Garcia",
+    "email": "amanda.garcia@email.com",
+    "phone": "+1 (555) 901-2345",
+    "address": "369 Willow Ct, Dallas, TX 75201",
+    "totalOrders": 9,
+    "totalSpent": 1456.23,
+    "createdAt": "2024-01-11T08:15:00.000Z"
+  },
+  {
+    "Id": 10,
+    "name": "Mark Taylor",
+    "email": "mark.taylor@email.com",
+    "phone": "+1 (555) 012-3456",
+    "address": "741 Ash Blvd, San Jose, CA 95101",
+    "totalOrders": 11,
+    "totalSpent": 1834.12,
+    "createdAt": "2024-01-13T17:30:00.000Z"
+  }
+]

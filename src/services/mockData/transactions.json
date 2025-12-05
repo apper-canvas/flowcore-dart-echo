@@ -1,0 +1,152 @@
+[
+  {
+    "Id": 1,
+    "date": "2024-01-26T10:30:00.000Z",
+    "type": "income",
+    "category": "Sales",
+    "description": "Order #ORD-001234 - Wireless Headphones & Cable",
+    "amount": 196.53,
+    "relatedOrderId": "1",
+    "notes": "Completed order payment"
+  },
+  {
+    "Id": 2,
+    "date": "2024-01-25T14:15:00.000Z",
+    "type": "income",
+    "category": "Sales",
+    "description": "Order #ORD-001237 - Business Strategy Guide",
+    "amount": 37.79,
+    "relatedOrderId": "4",
+    "notes": ""
+  },
+  {
+    "Id": 3,
+    "date": "2024-01-24T09:00:00.000Z",
+    "type": "expense",
+    "category": "Office Supplies",
+    "description": "Monthly office supplies order",
+    "amount": 245.67,
+    "relatedOrderId": null,
+    "notes": "Stationery, paper, and printing supplies"
+  },
+  {
+    "Id": 4,
+    "date": "2024-01-23T16:45:00.000Z",
+    "type": "expense",
+    "category": "Marketing",
+    "description": "Social media advertising campaign",
+    "amount": 350.00,
+    "relatedOrderId": null,
+    "notes": "Facebook and Instagram ads"
+  },
+  {
+    "Id": 5,
+    "date": "2024-01-22T11:20:00.000Z",
+    "type": "income",
+    "category": "Services",
+    "description": "Consulting services revenue",
+    "amount": 1500.00,
+    "relatedOrderId": null,
+    "notes": "Business strategy consulting"
+  },
+  {
+    "Id": 6,
+    "date": "2024-01-21T08:30:00.000Z",
+    "type": "expense",
+    "category": "Utilities",
+    "description": "Monthly electricity bill",
+    "amount": 287.45,
+    "relatedOrderId": null,
+    "notes": "Office electricity usage"
+  },
+  {
+    "Id": 7,
+    "date": "2024-01-20T15:10:00.000Z",
+    "type": "expense",
+    "category": "Rent",
+    "description": "Office rent payment",
+    "amount": 2500.00,
+    "relatedOrderId": null,
+    "notes": "Monthly office lease"
+  },
+  {
+    "Id": 8,
+    "date": "2024-01-19T13:25:00.000Z",
+    "type": "income",
+    "category": "Sales",
+    "description": "Direct sale - Electronics bundle",
+    "amount": 425.89,
+    "relatedOrderId": null,
+    "notes": "Walk-in customer purchase"
+  },
+  {
+    "Id": 9,
+    "date": "2024-01-18T10:15:00.000Z",
+    "type": "expense",
+    "category": "Cost of Goods",
+    "description": "Inventory restock - Electronics",
+    "amount": 1250.00,
+    "relatedOrderId": null,
+    "notes": "Wholesale purchase of electronic items"
+  },
+  {
+    "Id": 10,
+    "date": "2024-01-17T12:00:00.000Z",
+    "type": "expense",
+    "category": "Insurance",
+    "description": "Business insurance premium",
+    "amount": 450.00,
+    "relatedOrderId": null,
+    "notes": "Quarterly business insurance payment"
+  },
+  {
+    "Id": 11,
+    "date": "2024-01-16T09:30:00.000Z",
+    "type": "income",
+    "category": "Other Income",
+    "description": "Equipment sale - Old computers",
+    "amount": 800.00,
+    "relatedOrderId": null,
+    "notes": "Sale of deprecated office equipment"
+  },
+  {
+    "Id": 12,
+    "date": "2024-01-15T14:45:00.000Z",
+    "type": "expense",
+    "category": "Travel",
+    "description": "Business trip expenses",
+    "amount": 675.32,
+    "relatedOrderId": null,
+    "notes": "Client meeting travel costs"
+  },
+  {
+    "Id": 13,
+    "date": "2024-01-14T11:20:00.000Z",
+    "type": "income",
+    "category": "Sales",
+    "description": "Bulk order - Clothing items",
+    "amount": 1245.67,
+    "relatedOrderId": null,
+    "notes": "Large corporate order"
+  },
+  {
+    "Id": 14,
+    "date": "2024-01-13T16:10:00.000Z",
+    "type": "expense",
+    "category": "Other Expenses",
+    "description": "Professional services - Legal consultation",
+    "amount": 550.00,
+    "relatedOrderId": null,
+    "notes": "Contract review and legal advice"
+  },
+  {
+    "Id": 15,
+    "date": "2024-01-12T08:45:00.000Z",
+    "type": "income",
+    "category": "Interest",
+    "description": "Bank interest earned",
+    "amount": 45.23,
+    "relatedOrderId": null,
+    "notes": "Monthly interest on business savings"
+  }
+]

@@ -1,0 +1,184 @@
+[
+  {
+    "Id": 1,
+    "orderNumber": "ORD-001234",
+    "customerId": 1,
+    "status": "completed",
+    "items": [
+      {
+        "productId": "1",
+        "productName": "Wireless Bluetooth Headphones",
+        "quantity": 1,
+        "unitPrice": 149.99,
+        "total": 149.99
+      },
+      {
+        "productId": "8",
+        "productName": "USB-C Charging Cable",
+        "quantity": 2,
+        "unitPrice": 15.99,
+        "total": 31.98
+      }
+    ],
+    "subtotal": 181.97,
+    "tax": 14.56,
+    "total": 196.53,
+    "createdAt": "2024-01-20T10:30:00.000Z",
+    "updatedAt": "2024-01-22T14:15:00.000Z",
+    "notes": "Priority shipping requested"
+  },
+  {
+    "Id": 2,
+    "orderNumber": "ORD-001235",
+    "customerId": 2,
+    "status": "processing",
+    "items": [
+      {
+        "productId": "2",
+        "productName": "Cotton T-Shirt",
+        "quantity": 3,
+        "unitPrice": 29.99,
+        "total": 89.97
+      },
+      {
+        "productId": "10",
+        "productName": "Denim Jeans",
+        "quantity": 1,
+        "unitPrice": 79.99,
+        "total": 79.99
+      }
+    ],
+    "subtotal": 169.96,
+    "tax": 13.60,
+    "total": 183.56,
+    "createdAt": "2024-01-22T14:20:00.000Z",
+    "updatedAt": "2024-01-23T09:45:00.000Z",
+    "notes": ""
+  },
+  {
+    "Id": 3,
+    "orderNumber": "ORD-001236",
+    "customerId": 3,
+    "status": "pending",
+    "items": [
+      {
+        "productId": "5",
+        "productName": "Yoga Mat",
+        "quantity": 2,
+        "unitPrice": 39.99,
+        "total": 79.98
+      },
+      {
+        "productId": "11",
+        "productName": "Water Bottle",
+        "quantity": 2,
+        "unitPrice": 32.99,
+        "total": 65.98
+      }
+    ],
+    "subtotal": 145.96,
+    "tax": 11.68,
+    "total": 157.64,
+    "createdAt": "2024-01-25T11:15:00.000Z",
+    "updatedAt": "2024-01-25T11:15:00.000Z",
+    "notes": "Customer requested eco-friendly packaging"
+  },
+  {
+    "Id": 4,
+    "orderNumber": "ORD-001237",
+    "customerId": 4,
+    "status": "completed",
+    "items": [
+      {
+        "productId": "6",
+        "productName": "Business Strategy Guide",
+        "quantity": 1,
+        "unitPrice": 34.99,
+        "total": 34.99
+      }
+    ],
+    "subtotal": 34.99,
+    "tax": 2.80,
+    "total": 37.79,
+    "createdAt": "2024-01-18T16:45:00.000Z",
+    "updatedAt": "2024-01-19T10:20:00.000Z",
+    "notes": ""
+  },
+  {
+    "Id": 5,
+    "orderNumber": "ORD-001238",
+    "customerId": 5,
+    "status": "processing",
+    "items": [
+      {
+        "productId": "9",
+        "productName": "LED Desk Lamp",
+        "quantity": 1,
+        "unitPrice": 59.99,
+        "total": 59.99
+      },
+      {
+        "productId": "4",
+        "productName": "Smartphone Case",
+        "quantity": 3,
+        "unitPrice": 24.99,
+        "total": 74.97
+      }
+    ],
+    "subtotal": 134.96,
+    "tax": 10.80,
+    "total": 145.76,
+    "createdAt": "2024-01-24T13:30:00.000Z",
+    "updatedAt": "2024-01-25T08:15:00.000Z",
+    "notes": "Gift wrapping requested"
+  },
+  {
+    "Id": 6,
+    "orderNumber": "ORD-001239",
+    "customerId": 1,
+    "status": "cancelled",
+    "items": [
+      {
+        "productId": "3",
+        "productName": "Garden Hose",
+        "quantity": 1,
+        "unitPrice": 45.00,
+        "total": 45.00
+      }
+    ],
+    "subtotal": 45.00,
+    "tax": 3.60,
+    "total": 48.60,
+    "createdAt": "2024-01-23T09:00:00.000Z",
+    "updatedAt": "2024-01-24T15:30:00.000Z",
+    "notes": "Customer changed mind"
+  },
+  {
+    "Id": 7,
+    "orderNumber": "ORD-001240",
+    "customerId": 6,
+    "status": "pending",
+    "items": [
+      {
+        "productId": "7",
+        "productName": "Vitamin D Supplements",
+        "quantity": 2,
+        "unitPrice": 19.99,
+        "total": 39.98
+      },
+      {
+        "productId": "12",
+        "productName": "Face Moisturizer",
+        "quantity": 1,
+        "unitPrice": 42.99,
+        "total": 42.99
+      }
+    ],
+    "subtotal": 82.97,
+    "tax": 6.64,
+    "total": 89.61,
+    "createdAt": "2024-01-26T14:45:00.000Z",
+    "updatedAt": "2024-01-26T14:45:00.000Z",
+    "notes": ""
+  }
+]
