@@ -17,8 +17,7 @@ const Header = () => {
               className="flex items-center cursor-pointer"
               onClick={() => navigate("/")}
             >
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              </div>
+              <span></span>
             </div>
           </div>
         </div>
