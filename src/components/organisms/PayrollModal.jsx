@@ -164,8 +164,8 @@ const PayrollModal = ({ isOpen, onClose, onSubmit, payroll }) => {
           
           <FormField
             label="Month"
-            name="month_c"
-            type="date"
+name="month_c"
+            type="month"
             value={formData.month_c}
             onChange={handleInputChange}
             error={errors.month_c}
