@@ -206,9 +206,7 @@ class CustomerService {
       console.error("Error fetching top customers:", error);
       return [];
     }
-  }
 }
-
-export default new CustomerService();
+}
 
 export default new CustomerService();
