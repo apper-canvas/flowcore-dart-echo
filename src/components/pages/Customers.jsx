@@ -61,15 +61,18 @@ ordersData.forEach(order => {
     }
   };
 
-  const filterCustomers = () => {
+const filterCustomers = () => {
     let filtered = [...customers];
 
     // Search filter
     if (searchQuery) {
-filtered = filtered.filter(customer =>
+      filtered = filtered.filter(customer =>
         (customer.Name || customer.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
         (customer.email_c || customer.email || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (customer.phone_c || customer.phone || '').includes(searchQuery)
+        (customer.phone_c || customer.phone || '').includes(searchQuery) ||
+        (customer.Tags || customer.tags || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (customer.emergency_name_c || customer.emergencyName || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (customer.emergency_phone_c || customer.emergencyPhone || '').includes(searchQuery)
       );
     }
 
@@ -136,6 +139,31 @@ const columns = [
     { key: "Name", label: "Name", sortable: true },
     { key: "email_c", label: "Email", sortable: true },
     { key: "phone_c", label: "Phone", sortable: true },
+    { 
+      key: "Tags", 
+      label: "Tags", 
+      sortable: true,
+      render: (value) => value ? (
+        <div className="flex flex-wrap gap-1">
+          {value.split(',').map((tag, index) => (
+            <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              {tag.trim()}
+            </span>
+          ))}
+        </div>
+      ) : '-'
+    },
+    { 
+      key: "emergency_name_c", 
+      label: "Emergency Contact", 
+      sortable: true,
+      render: (value, customer) => (
+        <div className="text-sm">
+          <div className="font-medium">{value || '-'}</div>
+          <div className="text-gray-500">{customer.emergency_phone_c || ''}</div>
+        </div>
+      )
+    },
     { 
       key: "totalOrders", 
       label: "Orders", 

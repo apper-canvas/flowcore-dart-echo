@@ -13,6 +13,9 @@ class CustomerService {
           {"field": {"Name": "email_c"}},
           {"field": {"Name": "phone_c"}},
           {"field": {"Name": "address_c"}},
+          {"field": {"Name": "Tags"}},
+          {"field": {"Name": "emergency_phone_c"}},
+          {"field": {"Name": "emergency_name_c"}},
           {"field": {"Name": "CreatedOn"}},
           {"field": {"Name": "ModifiedOn"}}
         ],
@@ -31,7 +34,7 @@ class CustomerService {
     }
   }
 
-  async getById(id) {
+async getById(id) {
     try {
       const apperClient = getApperClient();
       if (!apperClient) throw new Error("ApperClient not initialized");
@@ -43,6 +46,9 @@ class CustomerService {
           {"field": {"Name": "email_c"}},
           {"field": {"Name": "phone_c"}},
           {"field": {"Name": "address_c"}},
+          {"field": {"Name": "Tags"}},
+          {"field": {"Name": "emergency_phone_c"}},
+          {"field": {"Name": "emergency_name_c"}},
           {"field": {"Name": "CreatedOn"}}
         ]
       });
@@ -58,7 +64,7 @@ class CustomerService {
     }
   }
 
-  async create(customerData) {
+async create(customerData) {
     try {
       const apperClient = getApperClient();
       if (!apperClient) throw new Error("ApperClient not initialized");
@@ -68,7 +74,10 @@ class CustomerService {
           Name: customerData.name || customerData.Name || '',
           email_c: customerData.email || customerData.email_c || '',
           phone_c: customerData.phone || customerData.phone_c || '',
-          address_c: customerData.address || customerData.address_c || ''
+          address_c: customerData.address || customerData.address_c || '',
+          Tags: customerData.tags || customerData.Tags || '',
+          emergency_phone_c: customerData.emergencyPhone || customerData.emergency_phone_c || '',
+          emergency_name_c: customerData.emergencyName || customerData.emergency_name_c || ''
         }]
       };
 
@@ -97,7 +106,7 @@ class CustomerService {
     }
   }
 
-  async update(id, customerData) {
+async update(id, customerData) {
     try {
       const apperClient = getApperClient();
       if (!apperClient) throw new Error("ApperClient not initialized");
@@ -108,7 +117,10 @@ class CustomerService {
           Name: customerData.name || customerData.Name || '',
           email_c: customerData.email || customerData.email_c || '',
           phone_c: customerData.phone || customerData.phone_c || '',
-          address_c: customerData.address || customerData.address_c || ''
+          address_c: customerData.address || customerData.address_c || '',
+          Tags: customerData.tags || customerData.Tags || '',
+          emergency_phone_c: customerData.emergencyPhone || customerData.emergency_phone_c || '',
+          emergency_name_c: customerData.emergencyName || customerData.emergency_name_c || ''
         }]
       };
 

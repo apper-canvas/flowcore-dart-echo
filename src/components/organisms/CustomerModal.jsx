@@ -9,25 +9,34 @@ const CustomerModal = ({ isOpen, onClose, customer, onSave }) => {
     name: "",
     email: "",
     phone: "",
-    address: ""
+    address: "",
+    tags: "",
+    emergencyPhone: "",
+    emergencyName: ""
   });
   
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (customer) {
-setFormData({
+      setFormData({
         name: customer.Name || customer.name || "",
         email: customer.email_c || customer.email || "",
         phone: customer.phone_c || customer.phone || "",
-        address: customer.address_c || customer.address || ""
+        address: customer.address_c || customer.address || "",
+        tags: customer.Tags || customer.tags || "",
+        emergencyPhone: customer.emergency_phone_c || customer.emergencyPhone || "",
+        emergencyName: customer.emergency_name_c || customer.emergencyName || ""
       });
     } else {
       setFormData({
         name: "",
         email: "",
         phone: "",
-        address: ""
+        address: "",
+        tags: "",
+        emergencyPhone: "",
+        emergencyName: ""
       });
     }
   }, [customer]);
@@ -68,8 +77,7 @@ setFormData({
             <ApperIcon name="X" className="w-5 h-5 text-gray-500" />
           </button>
         </div>
-
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+<form onSubmit={handleSubmit} className="p-6 space-y-4">
           <FormField
             label="Full Name"
             name="name"
@@ -105,7 +113,31 @@ setFormData({
             onChange={handleChange}
             placeholder="Enter address"
           />
-
+          
+          <FormField
+            label="Tags"
+            name="tags"
+            value={formData.tags}
+            onChange={handleChange}
+            placeholder="Enter tags (comma separated)"
+          />
+          
+          <FormField
+            label="Emergency Contact Name"
+            name="emergencyName"
+            value={formData.emergencyName}
+            onChange={handleChange}
+            placeholder="Enter emergency contact name"
+          />
+          
+          <FormField
+            label="Emergency Contact Phone"
+            type="tel"
+            name="emergencyPhone"
+            value={formData.emergencyPhone}
+            onChange={handleChange}
+            placeholder="Enter emergency contact phone"
+          />
           <div className="flex justify-end gap-3 pt-4 border-t">
             <Button
               type="button"
