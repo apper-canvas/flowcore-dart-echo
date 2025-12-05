@@ -120,10 +120,7 @@ const orderColumns = [
       key: "total_c", 
       label: "Total", 
       sortable: true,
-      render: (value) => {
-        const numericValue = Number(value) || 0;
-        return `$${numericValue.toFixed(2)}`;
-      }
+      render: (value) => `$${(value || 0).toFixed(2)}`
     },
     { key: "status_c", label: "Status", sortable: true },
     { 
