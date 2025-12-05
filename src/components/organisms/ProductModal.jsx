@@ -15,12 +15,13 @@ const [formData, setFormData] = useState({
     stockLevel: "",
     reorderPoint: "",
     unit: "pcs",
-    date: ""
+    date: "",
+    tags: ""
   });
   
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+useEffect(() => {
     if (product) {
 setFormData({
         sku: product.sku_c || product.sku || "",
@@ -32,7 +33,8 @@ setFormData({
         stockLevel: product.stock_level_c?.toString() || product.stockLevel?.toString() || "",
         reorderPoint: product.reorder_point_c?.toString() || product.reorderPoint?.toString() || "",
         unit: product.unit_c || product.unit || "pcs",
-        date: product.date_c || product.date || ""
+        date: product.date_c || product.date || "",
+        tags: product.Tags || product.tags || ""
       });
     } else {
       setFormData({
@@ -44,18 +46,21 @@ setFormData({
         cost: "",
         stockLevel: "",
         reorderPoint: "",
-        unit: "pcs"
+        unit: "pcs",
+        date: "",
+        tags: ""
       });
     }
   }, [product]);
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
 const productData = {
         name: formData.name,
+        Tags: formData.tags,
         sku_c: formData.sku,
         description_c: formData.description,
         category_c: formData.category,
@@ -118,7 +123,30 @@ const productData = {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+<form onSubmit={handleSubmit} className="p-6 space-y-6">
+          {/* System Audit Fields - Read Only Display */}
+          {product && (
+            <div className="bg-gray-50 p-4 rounded-lg border">
+              <h3 className="text-sm font-medium text-gray-700 mb-3">System Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="font-medium text-gray-600">Created:</span>{' '}
+                  {product.CreatedOn ? new Date(product.CreatedOn).toLocaleDateString() : 'N/A'}
+                  {product.CreatedBy?.Name && (
+                    <span className="text-gray-500"> by {product.CreatedBy.Name}</span>
+                  )}
+                </div>
+                <div>
+                  <span className="font-medium text-gray-600">Modified:</span>{' '}
+                  {product.ModifiedOn ? new Date(product.ModifiedOn).toLocaleDateString() : 'N/A'}
+                  {product.ModifiedBy?.Name && (
+                    <span className="text-gray-500"> by {product.ModifiedBy.Name}</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
               label="SKU"
@@ -136,7 +164,17 @@ const productData = {
               onChange={handleChange}
               placeholder="Enter product name"
               required
-/>
+            />
+          </div>
+
+          <div className="grid grid-cols-1 gap-6">
+            <FormField
+              label="Tags"
+              name="tags"
+              value={formData.tags}
+              onChange={handleChange}
+              placeholder="Enter tags (comma-separated)"
+            />
           </div>
 
           <FormField
