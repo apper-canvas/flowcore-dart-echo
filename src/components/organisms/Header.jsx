@@ -10,11 +10,12 @@ const Header = () => {
   const navigate = useNavigate();
   const { user } = useSelector(state => state.user);
   const { logout } = useAuth();
-  const navigationItems = [
+const navigationItems = [
     { name: "Dashboard", href: "/", icon: "BarChart3" },
     { name: "Inventory", href: "/inventory", icon: "Package" },
     { name: "Orders", href: "/orders", icon: "ShoppingCart" },
-{ name: "Customers", href: "/customers", icon: "Users" },
+    { name: "Sales Orders", href: "/sales-orders", icon: "ShoppingBag" },
+    { name: "Customers", href: "/customers", icon: "Users" },
     { name: "Financials", href: "/financials", icon: "DollarSign" },
     {
       name: "HR Management",
@@ -25,7 +26,7 @@ const Header = () => {
         { name: "Payroll", href: "/payroll", icon: "DollarSign" }
       ]
     }
-];
+  ];
   return (
     <header className="bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
