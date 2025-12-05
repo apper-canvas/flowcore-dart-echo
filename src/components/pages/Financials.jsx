@@ -8,6 +8,7 @@ import ErrorView from "@/components/ui/ErrorView";
 import Empty from "@/components/ui/Empty";
 import Select from "@/components/atoms/Select";
 import Button from "@/components/atoms/Button";
+import Pagination from "@/components/molecules/Pagination";
 import TransactionModal from "@/components/organisms/TransactionModal";
 import DataTable from "@/components/organisms/DataTable";
 import SearchBar from "@/components/molecules/SearchBar";
@@ -23,7 +24,9 @@ const Financials = () => {
   const [typeFilter, setTypeFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [selectedTransaction, setSelectedTransaction] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
 
   useEffect(() => {
     loadTransactions();
@@ -31,7 +34,7 @@ const Financials = () => {
 
   useEffect(() => {
     filterTransactions();
-  }, [transactions, searchQuery, typeFilter, categoryFilter]);
+}, [transactions, searchQuery, typeFilter, categoryFilter, currentPage, itemsPerPage]);
 
   const loadTransactions = async () => {
     setLoading(true);
@@ -73,7 +76,9 @@ const filterTransactions = () => {
       filtered = filtered.filter(transaction => (transaction.category_c || transaction.category) === categoryFilter);
     }
 
-    setFilteredTransactions(filtered);
+setFilteredTransactions(filtered);
+    // Reset to first page when filters change
+    setCurrentPage(1);
   };
 
   const handleSaveTransaction = async (transactionData) => {
@@ -306,11 +311,20 @@ const filterTransactions = () => {
           icon="FileText"
         />
       ) : (
-        <DataTable
+<DataTable
           data={filteredTransactions}
           columns={columns}
           loading={loading}
           onRowClick={handleEditTransaction}
+          pagination={{
+            component: Pagination,
+            currentPage: currentPage,
+            totalPages: Math.ceil(filteredTransactions.length / itemsPerPage),
+            totalItems: filteredTransactions.length,
+            itemsPerPage: itemsPerPage,
+            onPageChange: setCurrentPage,
+            onItemsPerPageChange: setItemsPerPage
+          }}
         />
       )}
 

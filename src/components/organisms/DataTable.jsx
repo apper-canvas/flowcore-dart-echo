@@ -9,6 +9,7 @@ const DataTable = ({
   loading, 
   emptyState,
   onRowClick,
+  pagination,
   className = ""
 }) => {
   const [sortBy, setSortBy] = useState("");
@@ -40,6 +41,16 @@ const DataTable = ({
   if (!data || data.length === 0) {
     return emptyState || <Empty />;
   }
+// Handle pagination if provided
+  const paginatedData = React.useMemo(() => {
+    if (!pagination || !sortedData) return sortedData;
+    
+    const { currentPage, itemsPerPage } = pagination;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    
+    return sortedData.slice(startIndex, endIndex);
+  }, [sortedData, pagination]);
 
   return (
     <div className={`card overflow-hidden ${className}`}>
@@ -52,7 +63,7 @@ const DataTable = ({
             onSort={handleSort}
           />
           <tbody className="bg-white divide-y divide-gray-200">
-            {sortedData.map((row, index) => (
+            {paginatedData.map((row, index) => (
               <tr
                 key={row.Id || index}
                 onClick={() => onRowClick && onRowClick(row)}
@@ -76,6 +87,17 @@ const DataTable = ({
           </tbody>
         </table>
       </div>
+      
+      {pagination && (
+        <pagination.component
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          totalItems={pagination.totalItems}
+          itemsPerPage={pagination.itemsPerPage}
+          onPageChange={pagination.onPageChange}
+          onItemsPerPageChange={pagination.onItemsPerPageChange}
+        />
+      )}
     </div>
   );
 };
