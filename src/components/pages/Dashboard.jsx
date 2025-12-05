@@ -120,7 +120,7 @@ const orderColumns = [
       key: "total_c", 
       label: "Total", 
       sortable: true,
-      render: (value) => `$${parseFloat(value || 0).toFixed(2)}`
+      render: (value) => `$${(value || 0).toFixed(2)}`
     },
     { key: "status_c", label: "Status", sortable: true },
     { 
@@ -139,27 +139,13 @@ const stockColumns = [
     {
       key: "status",
       label: "Status",
-      render: (value, row) => {
-        const stockLevel = row?.stock_level_c || 0;
-        const reorderPoint = row?.reorder_point_c || 0;
-        
-        let statusClass = 'status-low-stock';
-        let statusText = 'Low Stock';
-        
-        if (stockLevel === 0) {
-          statusClass = 'status-out-of-stock';
-          statusText = 'Out of Stock';
-        } else if (stockLevel > reorderPoint) {
-          statusClass = 'status-in-stock';
-          statusText = 'In Stock';
-        }
-        
-        return (
-          <span className={`status-badge ${statusClass}`}>
-            {statusText}
-          </span>
-        );
-      }
+      render: (value, product) => (
+        <span className={`status-badge ${
+          (product.stock_level_c || 0) === 0 ? 'status-out-of-stock' : 'status-low-stock'
+        }`}>
+          {(product.stock_level_c || 0) === 0 ? 'Out of Stock' : 'Low Stock'}
+        </span>
+      )
     }
   ];
 
