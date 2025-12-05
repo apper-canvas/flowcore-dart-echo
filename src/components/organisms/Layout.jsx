@@ -17,10 +17,10 @@ const Layout = () => {
 
   console.log("User authenticated, rendering layout");
 
-  return (
+return (
     <div className="min-h-screen bg-background flex">
       <Sidebar />
-      <div className="flex-1 lg:ml-64">
+      <div className="flex-1 lg:ml-64 ml-0">
         <Header />
         <main className="flex-1">
           <Outlet />

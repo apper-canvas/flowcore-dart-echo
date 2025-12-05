@@ -6,11 +6,8 @@ import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 
 const Header = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const { user } = useSelector(state => state.user);
-  const { logout } = useAuth();
-// Navigation moved to Sidebar component
+
   return (
     <header className="bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -25,46 +22,13 @@ const Header = () => {
                 <ApperIcon name="Layers" className="w-5 h-5 text-white" />
               </div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-ERP System
+                ERP System
               </h1>
             </div>
           </div>
-
-          {/* Desktop Navigation */}
-{/* Navigation moved to Sidebar - keeping header for branding and user actions */}
-{/* Mobile menu button moved to Sidebar component */}
         </div>
       </div>
-
-      {/* Mobile Navigation */}
-{isMobileMenuOpen && (
-        <div className="lg:hidden border-t border-gray-200 bg-white">
-          <div className="px-4 py-2">
-            <nav className="space-y-1">
-{/* Mobile navigation moved to Sidebar component */}
-              
-              {/* User Profile & Logout */}
-              <div className="border-t pt-4 mt-4">
-                {user && (
-                  <div className="px-3 py-2 text-sm text-gray-600 mb-2">
-                    Welcome, {user.firstName} {user.lastName}
-                  </div>
-                )}
-                <Button
-                  variant="ghost"
-                  onClick={logout}
-                  className="w-full justify-start px-3 py-3 text-gray-600 hover:text-red-600 hover:bg-red-50"
-                >
-                  <ApperIcon name="LogOut" className="w-5 h-5 mr-3" />
-                  Sign Out
-                </Button>
-              </div>
-            </nav>
-          </div>
-        </div>
-      )}
     </header>
   );
 };
-
 export default Header;
