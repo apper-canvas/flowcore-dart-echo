@@ -14,8 +14,17 @@ const Header = () => {
     { name: "Dashboard", href: "/", icon: "BarChart3" },
     { name: "Inventory", href: "/inventory", icon: "Package" },
     { name: "Orders", href: "/orders", icon: "ShoppingCart" },
-    { name: "Customers", href: "/customers", icon: "Users" },
-    { name: "Financials", href: "/financials", icon: "DollarSign" }
+{ name: "Customers", href: "/customers", icon: "Users" },
+    { name: "Financials", href: "/financials", icon: "DollarSign" },
+    {
+      name: "HR Management",
+      icon: "UserCog",
+      children: [
+        { name: "Employees", href: "/employees", icon: "Users" },
+        { name: "Attendance", href: "/attendance", icon: "Calendar" },
+        { name: "Payroll", href: "/payroll", icon: "DollarSign" }
+      ]
+    }
 ];
   return (
     <header className="bg-white border-b border-gray-200 shadow-sm">

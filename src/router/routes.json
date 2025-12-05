@@ -1,3 +1,4 @@
+[
 {
   "/": {
     "allow": {
@@ -49,9 +50,36 @@
         ]
       },
       "redirectOnDeny": "/login"
+}
+  }},
+  {
+    "path": "/employees",
+    "isPublic": false,
+    "redirect": null,
+    "element": "employees",
+    "meta": {
+      "title": "Employees"
     }
   },
-  "/financials": {
+  {
+    "path": "/attendance",
+    "isPublic": false,
+    "redirect": null,
+    "element": "attendance",
+    "meta": {
+      "title": "Attendance"
+    }
+  },
+  {
+    "path": "/payroll",
+    "isPublic": false,
+    "redirect": null,
+    "element": "payroll",
+    "meta": {
+      "title": "Payroll"
+    }
+  },
+  "/financials",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -64,7 +92,7 @@
       "redirectOnDeny": "/login"
     }
   },
-  "/login": {
+  "/login",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -76,7 +104,7 @@
       }
     }
   },
-  "/signup": {
+  "/signup",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -88,7 +116,7 @@
       }
     }
   },
-  "/callback": {
+  "/callback",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -100,7 +128,7 @@
       }
     }
   },
-  "/error": {
+  "/error",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -112,7 +140,7 @@
       }
     }
   },
-  "/prompt-password/*": {
+  "/prompt-password/*",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -124,7 +152,7 @@
       }
     }
   },
-  "/reset-password/*": {
+  "/reset-password/*",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -136,4 +164,5 @@
       }
     }
   }
-}
+
+]
