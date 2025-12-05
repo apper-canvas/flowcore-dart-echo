@@ -1,12 +1,12 @@
 import { getApperClient } from "@/services/apperClient";
 
 class ProductService {
-  async getAll() {
+async getAll() {
     try {
       const apperClient = getApperClient();
       if (!apperClient) throw new Error("ApperClient not initialized");
 
-const response = await apperClient.fetchRecords('product_c', {
+      const response = await apperClient.fetchRecords('product_c', {
         fields: [
           {"field": {"Name": "Id"}},
           {"field": {"Name": "Name"}},
@@ -29,7 +29,7 @@ const response = await apperClient.fetchRecords('product_c', {
       });
 
       if (!response.success) {
-        console.error(response.message);
+        console.error("Failed to fetch products:", response);
         return [];
       }
 
@@ -37,6 +37,52 @@ const response = await apperClient.fetchRecords('product_c', {
     } catch (error) {
       console.error("Error fetching products:", error);
       return [];
+    }
+  }
+
+  async getAllPaginated(limit = 20, offset = 0) {
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) throw new Error("ApperClient not initialized");
+
+      const response = await apperClient.fetchRecords('product_c', {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "Tags"}},
+          {"field": {"Name": "sku_c"}},
+          {"field": {"Name": "description_c"}},
+          {"field": {"Name": "category_c"}},
+          {"field": {"Name": "price_c"}},
+          {"field": {"Name": "cost_c"}},
+          {"field": {"Name": "stock_level_c"}},
+          {"field": {"Name": "reorder_point_c"}},
+          {"field": {"Name": "unit_c"}},
+          {"field": {"Name": "date_c"}},
+          {"field": {"Name": "CreatedOn"}},
+          {"field": {"Name": "CreatedBy"}},
+          {"field": {"Name": "ModifiedOn"}},
+          {"field": {"Name": "ModifiedBy"}}
+        ],
+        orderBy: [{"fieldName": "Name", "sorttype": "ASC"}],
+        pagingInfo: {
+          limit: limit,
+          offset: offset
+        }
+      });
+
+      if (!response.success) {
+        console.error("Failed to fetch paginated products:", response);
+        return { data: [], total: 0 };
+      }
+
+      return {
+        data: response.data || [],
+        total: response.total || 0
+      };
+    } catch (error) {
+      console.error("Error fetching paginated products:", error);
+      return { data: [], total: 0 };
     }
   }
 

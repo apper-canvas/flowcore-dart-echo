@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import productService from "@/services/api/productService";
+import ApperIcon from "@/components/ApperIcon";
+import Loading from "@/components/ui/Loading";
+import ErrorView from "@/components/ui/ErrorView";
+import Empty from "@/components/ui/Empty";
+import Select from "@/components/atoms/Select";
+import Button from "@/components/atoms/Button";
 import DataTable from "@/components/organisms/DataTable";
 import ProductModal from "@/components/organisms/ProductModal";
 import SearchBar from "@/components/molecules/SearchBar";
 import StatusBadge from "@/components/molecules/StatusBadge";
-import Button from "@/components/atoms/Button";
-import Select from "@/components/atoms/Select";
-import Loading from "@/components/ui/Loading";
-import ErrorView from "@/components/ui/ErrorView";
-import Empty from "@/components/ui/Empty";
-import ApperIcon from "@/components/ApperIcon";
-import productService from "@/services/api/productService";
+import Pagination from "@/components/molecules/Pagination";
 
 const Inventory = () => {
   const [products, setProducts] = useState([]);
@@ -20,30 +21,53 @@ const Inventory = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState(null);
+const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
+  const [totalItems, setTotalItems] = useState(0);
 
   useEffect(() => {
     loadProducts();
-  }, []);
+  }, [currentPage, itemsPerPage]);
 
   useEffect(() => {
-    filterProducts();
+filterProducts();
   }, [products, searchQuery, categoryFilter, statusFilter]);
 
-  const loadProducts = async () => {
+const loadProducts = async () => {
     setLoading(true);
     setError("");
     
     try {
-      const data = await productService.getAll();
-      setProducts(data);
-    } catch (err) {
+      const offset = (currentPage - 1) * itemsPerPage;
+      const result = await productService.getAllPaginated(itemsPerPage, offset);
+      
+      if (result && result.data) {
+        setProducts(result.data || []);
+        setTotalItems(result.total || 0);
+      } else {
+        setProducts([]);
+        setTotalItems(0);
+      }
+    } catch (error) {
+      console.error("Error loading products:", error);
       setError("Failed to load products");
-      console.error("Products error:", err);
+      toast.error("Failed to load products");
+      setProducts([]);
+      setTotalItems(0);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage) => {
+setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1); // Reset to first page when changing items per page
   };
 
   const filterProducts = () => {
@@ -72,7 +96,7 @@ if (categoryFilter) {
       });
     }
 
-    setFilteredProducts(filtered);
+setFilteredProducts(filtered);
   };
 
 const getStockStatus = (product) => {
@@ -83,21 +107,21 @@ const getStockStatus = (product) => {
     return "in-stock";
   };
 
-  const handleSaveProduct = async (productData) => {
+const handleSaveProduct = async (productData) => {
     try {
       if (selectedProduct) {
         await productService.update(selectedProduct.Id, productData);
-        const updatedProducts = products.map(p =>
-          p.Id === selectedProduct.Id ? { ...p, ...productData } : p
-        );
-        setProducts(updatedProducts);
+        loadProducts(); // Reload current page
+        toast.success("Product updated successfully");
       } else {
         const newProduct = await productService.create(productData);
-        setProducts([...products, newProduct]);
+        loadProducts(); // Reload to get fresh data with pagination
+        toast.success("Product created successfully");
       }
       setIsModalOpen(false);
       setSelectedProduct(null);
     } catch (error) {
+      toast.error("Failed to save product");
       throw error;
     }
   };
@@ -221,6 +245,18 @@ const columns = [
 
 const categories = [...new Set(products.map(p => p.category_c || p.category).filter(Boolean))];
 
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const paginationConfig = {
+    component: Pagination,
+    currentPage,
+    totalPages,
+    totalItems,
+    itemsPerPage,
+    onPageChange: handlePageChange,
+    onItemsPerPageChange: handleItemsPerPageChange
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
@@ -281,11 +317,12 @@ const categories = [...new Set(products.map(p => p.category_c || p.category).fil
           icon="Package"
         />
       ) : (
-        <DataTable
+<DataTable
           data={filteredProducts}
           columns={columns}
           loading={loading}
           onRowClick={handleEditProduct}
+          pagination={paginationConfig}
         />
       )}
 
