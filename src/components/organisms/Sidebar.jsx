@@ -14,7 +14,8 @@ const navigationItems = [
     icon: "UserCog",
     children: [
       { name: "Employees", href: "/employees", icon: "Users" },
-      { name: "Attendance", href: "/attendance", icon: "Calendar" },
+{ name: "Attendance", href: "/attendance", icon: "Calendar" },
+      { name: "Departments", href: "/departments", icon: "Building" },
       { name: "Payroll", href: "/payroll", icon: "DollarSign" }
     ]
   }

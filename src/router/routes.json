@@ -103,6 +103,20 @@
       },
       "redirectOnDeny": "/login"
     }
+},
+  "/departments": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "User must be authenticated to view departments",
+            "rule": "authenticated"
+          }
+        ]
+      },
+      "redirectOnDeny": "/login",
+      "excludeRedirectQuery": false
+    }
   }
 },
   "/financials",":", {

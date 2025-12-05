@@ -10,6 +10,7 @@ const Inventory = lazy(() => import("@/components/pages/Inventory"));
 const Orders = lazy(() => import("@/components/pages/Orders"));
 const SalesOrders = lazy(() => import("@/components/pages/SalesOrders"));
 const Customers = lazy(() => import("@/components/pages/Customers"));
+const Departments = lazy(() => import("@/components/pages/Departments"));
 const Financials = lazy(() => import("@/components/pages/Financials"));
 const Employees = lazy(() => import("@/components/pages/Employees"));
 const Attendance = lazy(() => import("@/components/pages/Attendance"));
@@ -133,6 +134,11 @@ createRoute({
           createRoute({
             path: "attendance", 
             element: <Attendance />
+}),
+          createRoute({
+            path: 'departments',
+            element: <Departments />,
+            title: 'Departments'
           }),
           createRoute({
             path: "payroll",
