@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import TableHeader from "@/components/molecules/TableHeader";
 import Loading from "@/components/ui/Loading";
 import Empty from "@/components/ui/Empty";
+import TableHeader from "@/components/molecules/TableHeader";
 
 const DataTable = ({ 
   data, 
@@ -39,9 +39,9 @@ const DataTable = ({
     
     const { currentPage, itemsPerPage } = pagination;
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
     
-    return sortedData.slice(startIndex, endIndex);
+    // Ensure we don't go beyond array bounds
+    return sortedData.slice(startIndex, startIndex + itemsPerPage);
   }, [sortedData, pagination]);
 
   if (loading) {
@@ -51,7 +51,6 @@ const DataTable = ({
   if (!data || data.length === 0) {
     return emptyState || <Empty />;
   }
-
   return (
     <div className={`card overflow-hidden ${className}`}>
       <div className="overflow-x-auto">
