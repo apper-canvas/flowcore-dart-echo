@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import DataTable from "@/components/organisms/DataTable";
-import OrderModal from "@/components/organisms/OrderModal";
-import InvoicePDFModal from "@/components/organisms/InvoicePDFModal";
-import SearchBar from "@/components/molecules/SearchBar";
-import StatusBadge from "@/components/molecules/StatusBadge";
-import Button from "@/components/atoms/Button";
-import Select from "@/components/atoms/Select";
+import { format } from "date-fns";
+import orderService from "@/services/api/orderService";
+import customerService from "@/services/api/customerService";
+import ApperIcon from "@/components/ApperIcon";
 import Loading from "@/components/ui/Loading";
 import ErrorView from "@/components/ui/ErrorView";
 import Empty from "@/components/ui/Empty";
-import ApperIcon from "@/components/ApperIcon";
-import orderService from "@/services/api/orderService";
-import customerService from "@/services/api/customerService";
-import { format } from "date-fns";
+import Select from "@/components/atoms/Select";
+import Button from "@/components/atoms/Button";
+import InvoicePDFModal from "@/components/organisms/InvoicePDFModal";
+import OrderModal from "@/components/organisms/OrderModal";
+import DataTable from "@/components/organisms/DataTable";
+import SearchBar from "@/components/molecules/SearchBar";
+import StatusBadge from "@/components/molecules/StatusBadge";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -58,12 +58,11 @@ const [selectedOrder, setSelectedOrder] = useState(null);
     let filtered = [...orders];
 
     // Search filter
-    if (searchQuery) {
-filtered = filtered.filter(order => {
-        const customer = customers.find(c => c.Id === (order.customer_id_c || order.customerId));
+if (searchQuery) {
+      filtered = filtered.filter(order => {
         return (
           (order.order_number_c || order.orderNumber || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-          (customer?.Name || customer?.name || '').toLowerCase().includes(searchQuery.toLowerCase())
+          (order.customer_id_c?.Name || '').toLowerCase().includes(searchQuery.toLowerCase())
         );
       });
     }
@@ -76,7 +75,7 @@ if (statusFilter) {
     setFilteredOrders(filtered);
   };
 
-  const handleSaveOrder = async (orderData) => {
+const handleSaveOrder = async (orderData) => {
     try {
       if (selectedOrder) {
         await orderService.update(selectedOrder.Id, orderData);
@@ -84,9 +83,13 @@ if (statusFilter) {
           o.Id === selectedOrder.Id ? { ...o, ...orderData } : o
         );
         setOrders(updatedOrders);
+        // Reload orders to get fresh lookup data
+        await loadData();
       } else {
         const newOrder = await orderService.create(orderData);
         setOrders([...orders, newOrder]);
+        // Reload orders to get fresh lookup data
+        await loadData();
       }
       setIsModalOpen(false);
       setSelectedOrder(null);
@@ -133,9 +136,17 @@ const handleEditOrder = (order) => {
     }
   };
 
-const getCustomerName = (customerId) => {
-    const customer = customers.find(c => c.Id === customerId);
-    return customer ? (customer.Name || customer.name) : "Unknown Customer";
+const getCustomerName = (customerLookup) => {
+    // Handle lookup object returned by ApperClient
+    if (typeof customerLookup === 'object' && customerLookup?.Name) {
+      return customerLookup.Name;
+    }
+    // Handle direct ID (fallback case)
+    if (typeof customerLookup === 'number') {
+      const customer = customers.find(c => c.Id === customerLookup);
+      return customer?.Name || "Unknown Customer";
+    }
+    return "Unknown Customer";
   };
 
 const columns = [
